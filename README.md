@@ -10,5 +10,7 @@ This repository contains materials & assignment codes I wrote in CSCI 3120 Opera
 ***I do not own the above codes. No share/copy is allowed.***
 
 ***
+
 **Author: Xinjing Wei**
+
 May 16th, 2014
