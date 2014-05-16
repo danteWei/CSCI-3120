@@ -182,6 +182,8 @@ int read_line(char line[], int len) {
 //Check the format of the input line
 int checkFormat(char *line){
 	int check=-1;
-
+	
+	/*Check format*/
+	
 	return check;
 }
