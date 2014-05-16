@@ -1,0 +1,55 @@
+Pmessages sample code
+---------------------
+
+The pmessages.c and pmessages.h files implement a blocking receive and
+nonblockin send mailbox system to be used with the pthreads library.
+The messages sent through the system are character strings only.  
+
+When a message is sent, a copy of the message is made for delivery, so
+the sending thread can re-use the memory after the send function returns.
+When a thread receives a message, that thread becomes responsible for the
+memory allocate for the copy.  The receiving thread must call free() on
+the received message string once the thread is finished with the message.
+
+The mailboxes use a linked list structure to store the character strings.
+Each thread has its own mailbox and can only received from its own
+mailbox.
+
+When sending a message, you need to know the pthread id of the destination
+thread.
+
+Although each thread has its own mailbox, a mailbox for a thread is
+only created when some message is being sent to that thread or when
+a thread asks to wait for a message.  The set of mailboxes is stored
+as a linked list in a global variable in pmessages.c; the global is
+defined as "static" meaning that it is only available to functions in
+the pmessages.c file.  We also store a mutex as a global variable to
+lock the list of mailboxes so that two threads cannot both try to create
+a mailbox simultaneously.
+
+Usage
+-----
+
+The mailbox system must be start with a call to messages_init().
+This call must be done only once.
+
+When finished, the mailbox system can be torn down with a call to
+messages_end(), which will release all memory allocated by the message
+system.
+
+Messages are sent with send_message_to_thread(), where the thread
+ID supplied to the function is the ID of the destination thread, and
+messages are recieved with receive_message().
+
+Return codes
+------------
+
+The functions that return error codes indicate either success (MSG_OK)
+or failure (MSG_FAIL).  There are no other return codes.
+
+Files
+-----
+
+Programs using the message system should include pmessages.h.  Only the
+pmessages library itself should include the pmessages_private.h file.
+

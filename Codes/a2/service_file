@@ -1,0 +1,3 @@
+add:add_secret:a,b,c
+sub:sub_secret:a,b
+mult:mult_secret:a

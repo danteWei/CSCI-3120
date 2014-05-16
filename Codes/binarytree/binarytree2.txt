@@ -1,0 +1,115 @@
+/* Binary search tree, unique elements only */
+
+treenode:
+  int data;
+  treenode *left, *right, *parent;
+
+search( treenode *root, int data )
+{
+  treenode *current;
+  treenode *parent;
+  treenode *node;
+
+  parent = NULL;
+  current = *root;
+
+  while ((current != NULL) && (current->data != data)) {
+      parent = current;
+    if (current->data > data) {
+      current = current->left;
+    } else {
+      current = current->right;
+    }
+  }
+
+  return current;
+}
+
+add( treenode **root, int data )
+{
+  treenode *current;
+  treenode *parent;
+  treenode *node;
+
+  /* Find the location for the new data in the tree. */
+
+  current = search( *root, data );
+  if (current != NULL) {
+    parent = current->parent;
+  } else {
+    parent = NULL;
+  }
+
+  if (current == NULL) {
+    /* Put the new data into the tree. */
+
+    node = created treenode
+    node->data = data;
+    node->parent = parent;
+    node->left = NULL;
+    node->right = NULL;
+
+    if (parent == NULL) {
+      *root = node;
+    } else {
+      if (parent->data > data) {
+        parent->right = node;
+      }
+    }
+  } else {
+    /* data already in the tree.  Nothing to do. */
+  }
+}
+
+
+delete( treenode **root, int data )
+{
+  treenode *current;
+  treenode *parent;
+  treenode *replacement;
+
+  current = search( *root, data );
+  if (current != NULL) {
+    parent = current->parent;
+  } else {
+    parent = NULL;
+  }
+
+  if (current == NULL) {
+    /* Data not in the tree, so nothing to delete. */
+  } else {
+    /* Find a replacement node. */
+    if (current->left != NULL) {
+      /* Locate my predecessor. */
+      replacement = current->left;
+      while (replacement->right != NULL) {
+        replacement = replacement->right;
+      }
+    } else if (current->right != NULL) {
+      /* Loate my successor. */
+      replacement = current->right;
+      while (replacement->left != NULL) {
+        replacement = replacement->left;
+      }
+    } else {
+      replacement = current;
+    }
+
+    /* Swap the data at the replacement node with the node to delete. */
+
+    current->data = replacement->data;
+    if (replacememt->parent == NULL) {
+      *root = NULL;
+    } else {
+      /* Fix my parent's pointers. */
+      if (replacement->parent->left == replacement) {
+        replacement->parent->left = NULL;
+      } else {
+        replacement->parent->right = NULL;
+      }
+    }
+    free node "replacement"
+  }
+}
+
+
