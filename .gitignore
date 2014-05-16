@@ -3,3 +3,4 @@ Textbook/
 */**/.DS_Store
 .DS_Store
 */**/*.swp
+*/**/*.dSYM
