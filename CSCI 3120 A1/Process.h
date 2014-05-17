@@ -1,4 +1,4 @@
-//Header file of Process
+//Header file for Process
 //Author: Xinjing Wei
 
 #ifndef _Process_h_

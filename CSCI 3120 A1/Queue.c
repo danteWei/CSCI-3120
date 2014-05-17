@@ -29,11 +29,13 @@ char *getQueueName(Queue *q){
 
 //delete the queue and release all related memories
 void Queue_clear(Queue *q){
+	//Change the head pointer to NULL
+	q->head=NULL;
+	
 	//Free the list in the queue
 	List_destroy(q->list);
 
-	//Change the head pointer to NULL
-	q->head=NULL;
+	
 }
 
 //Add data to the front of the queue

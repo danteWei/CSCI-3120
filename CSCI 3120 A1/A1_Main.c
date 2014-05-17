@@ -1,24 +1,29 @@
 //Main class of CSCI 3120 Assignment 1
+//Some of the ideas come from the codes written by Michael McAllister
 //Author: Xinjing Wei
 
 #include<unistd.h>
 #include<stdio.h>
 #include<stdlib.h>
 #include<signal.h>
+#include<string.h>
 #include "A1_Main.h"
 #include "list.h"
 #include "Queue.h"
 #include "Process.h"
 
 
-#define MAXLEN 80
+#define MAXLEN (81)
+#define MAXNAME (21)
+
 SysState *SYSSTATES;
 Queue waitingQueue;
-int TIMER;
+int TIMER=0;
 
 //function for alarm interrupt
 void alarm_bells(int singal){
 	/*Start alarm*/
+	alarm(TIMER);
 }
 
 //function for urs1 interrupt
@@ -100,7 +105,11 @@ void installHandlerCol(int *return_code){
 int main(int argc, char **argv){
 	int return_code=0;
 	int timer;
-	char *line;
+	char line[MAXLEN];
+	char name[MAXLEN];
+	int lifeTime, runTime;
+	PCB *pcb;
+
 	//For checking install status
 	int alrmSuc=1, urs1Suc=1, hupSuc=1, breakSuc=1;
 
@@ -128,6 +137,28 @@ int main(int argc, char **argv){
 		exit(EXIT_FAILURE);
 	}
 	
+	//Initialize system states queues
+	Queue *newQ, *readyQ, *runQ, *blockedQ, *exitQ;
+	int newCheck=Queue_init(newQ, "new");
+	int runCheck=Queue_init(runQ, "run");
+	int readyCheck=Queue_init(readyQ, "ready");
+	int blockedCheck=Queue_init(blockedQ, "blocked");
+	int exitCheck=Queue_init(exitQ, "exit");
+	
+	if(!(newCheck && runCheck && readyCheck && blockedCheck && exitCheck)){
+		printf("Fail to initilize the state queues, program will terminate in 3 seconds.\n");
+		sleep(3);
+		exit(EXIT_FAILURE);
+	}
+
+	SYSSTATES->New=newQ;
+	SYSSTATES->Ready=readyQ;
+	SYSSTATES->Running=runQ;
+	SYSSTATES->Blocked=blockedQ;
+	SYSSTATES->Exit=exitQ;
+
+	
+
 	/*
 	 *Codes contniue here
 	 */
@@ -142,19 +173,40 @@ int main(int argc, char **argv){
 	}
 
 	//Set the alarm interrupt going
-	alarm(timer);
+	if(TIMER > 0)
+		alarm(TIMER);
 
 
 	//Listen to the keyboard inputs and update the queues
+	//The idea of most of the codes in the while loop are from parse.c written by Michael McAllister
 	while(1){
 		//Get line from keyboard with max string length
-		fgets(line, MAXLEN, stdin);
+		fgets(line, MAXLEN-1, stdin);
 		
 		//Check if the input is read and is of the correct format
-		if(line == NULL || (checkFormat(line) == -1)){
+		if(line == NULL){
 			printf("No input is read from keyboard or the input format is incorrect, please try it again.\n");
 			continue;
 		}
+
+		if(sscanf(line, "%s %d %d", name, &lifeTime, &runTime) == 3){
+			pcb=(PCB *) malloc(sizeof(PCB));
+			if(pcb != NULL){
+				strncpy(pcb->name, name, MAXNAME-1);
+				//Terminates the string
+				pcb->name[MAXNAME-1]='\0';
+				pcb->lifeTime=lifeTime;
+
+				//If the process was not added to the queue
+				if(Queue_add_tail((void *) pcb, newQ) == 0)
+					printf("Error in adding the process into the queue.\n");
+			}
+			else
+				printf("System out of memory.\n");
+
+		}
+		else
+			printf("Incorrect number of inputs!\n");
 
 
 	}
@@ -179,11 +231,3 @@ int read_line(char line[], int len) {
   return i;
 }
 
-//Check the format of the input line
-int checkFormat(char *line){
-	int check=-1;
-	
-	/*Check format*/
-	
-	return check;
-}
