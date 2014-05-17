@@ -23,6 +23,18 @@ int TIMER=0;
 //function for alarm interrupt
 void alarm_bells(int singal){
 	/*Start alarm*/
+	printf("alarm start\n");
+	//Move all processes in the new queue to the ready queue
+	if(size(SYSSTATES->New) != 0){
+		List_node_t *curr=SYSSTATES->New->head;
+		PCB *temp=NULL;
+		while(curr != NULL){
+			curr=curr->next;
+			Queue_remove_first(SYSSTATES->New, (void *)temp);
+			Queue_add_tail(SYSSTATES->Ready, (void *)&temp);
+		}
+	}
+
 	alarm(TIMER);
 }
 
@@ -42,8 +54,9 @@ void reConfig(){
 	}
 
 	/*Read the new timer*/
-	
-
+	char line[MAXLEN];
+	if(fgets(line, MAXLEN-1, fp) != NULL)
+		TIMER=line[6]-'0';
 
 	//Close the file
 	if(fclose(fp) != 0){
@@ -137,32 +150,12 @@ int main(int argc, char **argv){
 		exit(EXIT_FAILURE);
 	}
 	
-	//Initialize system states queues
-	Queue *newQ, *readyQ, *runQ, *blockedQ, *exitQ;
-	int newCheck=Queue_init(newQ, "new");
-	int runCheck=Queue_init(runQ, "run");
-	int readyCheck=Queue_init(readyQ, "ready");
-	int blockedCheck=Queue_init(blockedQ, "blocked");
-	int exitCheck=Queue_init(exitQ, "exit");
-	
-	if(!(newCheck && runCheck && readyCheck && blockedCheck && exitCheck)){
-		printf("Fail to initilize the state queues, program will terminate in 3 seconds.\n");
-		sleep(3);
-		exit(EXIT_FAILURE);
-	}
-
-	SYSSTATES->New=newQ;
-	SYSSTATES->Ready=readyQ;
-	SYSSTATES->Running=runQ;
-	SYSSTATES->Blocked=blockedQ;
-	SYSSTATES->Exit=exitQ;
-
+	char timerLine[MAXLEN];
+	if(fgets(timerLine, MAXLEN-1, fp) != NULL)
+		TIMER=timerLine[6]-'0';
 	
 
-	/*
-	 *Codes contniue here
-	 */
-	
+		
 
 	//Close file
 	int file_close_code=fclose(fp);
@@ -172,10 +165,34 @@ int main(int argc, char **argv){
 		exit(EXIT_FAILURE);
 	}
 
+	//Initialize system states queues
+	Queue newQ, readyQ, runQ, blockedQ, exitQ;
+	int newCheck=Queue_init(&newQ, "new");
+	int runCheck=Queue_init(&runQ, "run");
+	int readyCheck=Queue_init(&readyQ, "ready");
+	int blockedCheck=Queue_init(&blockedQ, "blocked");
+	int exitCheck=Queue_init(&exitQ, "exit");
+	
+	if(!(newCheck && runCheck && readyCheck && blockedCheck && exitCheck)){
+		printf("Fail to initilize the state queues, program will terminate in 3 seconds.\n");
+		sleep(3);
+		exit(EXIT_FAILURE);
+	}
+
+	SYSSTATES->New=&newQ;
+	SYSSTATES->Ready=&readyQ;
+	SYSSTATES->Running=&runQ;
+	SYSSTATES->Blocked=&blockedQ;
+	SYSSTATES->Exit=&exitQ;
+	
+	/*
+	 *Codes contniue here
+	 */
+
+
 	//Set the alarm interrupt going
 	if(TIMER > 0)
 		alarm(TIMER);
-
 
 	//Listen to the keyboard inputs and update the queues
 	//The idea of most of the codes in the while loop are from parse.c written by Michael McAllister
@@ -198,7 +215,7 @@ int main(int argc, char **argv){
 				pcb->lifeTime=lifeTime;
 
 				//If the process was not added to the queue
-				if(Queue_add_tail((void *) pcb, newQ) == 0)
+				if(Queue_add_tail((void *) pcb, SYSSTATES->New) == 0)
 					printf("Error in adding the process into the queue.\n");
 			}
 			else
