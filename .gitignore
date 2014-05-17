@@ -5,3 +5,5 @@ Textbook/
 */**/*.swp
 */**/*.dSYM
 *.pdf
+*.doc
+*.docx
