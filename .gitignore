@@ -4,3 +4,4 @@ Textbook/
 .DS_Store
 */**/*.swp
 */**/*.dSYM
+*/**/*.pdf
