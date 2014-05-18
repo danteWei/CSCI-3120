@@ -197,6 +197,7 @@ int main(int argc, char **argv){
 		}
 
 		if(sscanf(line, "%s %d %d", name, &lifeTime, &runTime) == 3){
+			//printf("Process name: %s; Life time: %d; Run state time: %d\n", name, lifeTime, runTime);
 			pcb=(PCB *) malloc(sizeof(PCB));
 			if(pcb != NULL){
 				strncpy(pcb->name, name, MAXNAME-1);
