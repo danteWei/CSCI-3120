@@ -2,6 +2,9 @@
 #ifndef _list_h_
 #define _list_h_
 
+#define MAXNAME (21)
+
+
 typedef struct list_node {
   void             *data;
   struct list_node *next;
@@ -9,12 +12,14 @@ typedef struct list_node {
 } List_node_t;
 
 typedef struct {
+  char name[MAXNAME];
   List_node_t *head;
   List_node_t *tail;
 } List_t;
 
-int  List_init ( List_t *list );
+int  List_init ( List_t *list, char *listName );
 void List_destroy( List_t *list );
+int List_size(List_t *list);
 
 int List_add_tail ( List_t *list, void *data );
 int List_add_head ( List_t *list, void *data );

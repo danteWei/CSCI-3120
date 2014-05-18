@@ -2,6 +2,13 @@
 //Some of the ideas come from the codes written by Michael McAllister
 //Author: Xinjing Wei
 
+
+/*I can build a structure called Queue based on the structure List_t, but I chose not to
+*The reason is that I think it is unnecessary to do that, 
+*because if I do, I just need to wrap List_t within Queue, 
+*which is, obviously, unnecessary.
+*/
+
 #include<unistd.h>
 #include<stdio.h>
 #include<stdlib.h>
@@ -9,15 +16,15 @@
 #include<string.h>
 #include "A1_Main.h"
 #include "list.h"
-#include "Queue.h"
-#include "Process.h"
 
 
 #define MAXLEN (81)
 #define MAXNAME (21)
 
-SysState *SYSSTATES;
-Queue waitingQueue;
+SysState SYSSTATES;
+
+
+
 int TIMER=0;
 
 //function for alarm interrupt
@@ -25,13 +32,13 @@ void alarm_bells(int singal){
 	/*Start alarm*/
 	printf("alarm start\n");
 	//Move all processes in the new queue to the ready queue
-	if(size(SYSSTATES->New) != 0){
-		List_node_t *curr=SYSSTATES->New->head;
+	if(List_size(SYSSTATES.New) != 0){
+		List_node_t *curr=(SYSSTATES.New)->head;
 		PCB *temp=NULL;
 		while(curr != NULL){
 			curr=curr->next;
-			Queue_remove_first(SYSSTATES->New, (void *)temp);
-			Queue_add_tail(SYSSTATES->Ready, (void *)&temp);
+			List_remove_head(SYSSTATES.New, (void *)temp);
+			List_add_tail(SYSSTATES.Ready, (void *)&temp);
 		}
 	}
 
@@ -44,21 +51,24 @@ void printSysState(){
 }
 
 //function for hup interrupt
-void reConfig(){
+void readConfig(){
+	//Open configuration file
 	FILE *fp=0;
 	fp=fopen("config.txt", "r");
+
+	//check if something wrong when opening the file
 	if(fp == 0){
 		printf("Fail to open the file, please check the file name! Program will exit in 3 seconds.\n");
 		sleep(3);
 		exit(EXIT_FAILURE);
 	}
 
-	/*Read the new timer*/
-	char line[MAXLEN];
-	if(fgets(line, MAXLEN-1, fp) != NULL)
-		TIMER=line[6]-'0';
+	//Read timer from config.txt
+	char timerLine[MAXLEN];
+	if(fgets(timerLine, MAXLEN-1, fp) != NULL)
+		TIMER=timerLine[6]-'0';
 
-	//Close the file
+	//close file
 	if(fclose(fp) != 0){
 		printf("Fail to close the file! Program will exit in 3 seconds.\n");
 		sleep(3);
@@ -69,11 +79,11 @@ void reConfig(){
 //function for break interrupt
 void exitAll(){
 	//Destroy all Queues
-	Queue_clear(SYSSTATES->New);
-	Queue_clear(SYSSTATES->Ready);
-	Queue_clear(SYSSTATES->Running);
-	Queue_clear(SYSSTATES->Blocked);
-	Queue_clear(SYSSTATES->Exit);
+	List_destroy(SYSSTATES.New);
+	List_destroy(SYSSTATES.Ready);
+	List_destroy(SYSSTATES.Running);
+	List_destroy(SYSSTATES.Blocked);
+	List_destroy(SYSSTATES.Exit);
 
 	/*Free other memory allocations*/
 
@@ -96,7 +106,7 @@ void installHandlerInd(int *alrmSuc, int *urs1Suc, int *hupSuc, int *breakSuc){
 		printf("%surs1 handler!\n", errInstallMsg);
 		*urs1Suc=-1;
 	}
-	if(signal(SIGHUP, reConfig) == SIG_ERR){
+	if(signal(SIGHUP, readConfig) == SIG_ERR){
 		printf("%shup handler!\n", errInstallMsg);
 		*hupSuc=-1;
 	}
@@ -108,7 +118,7 @@ void installHandlerInd(int *alrmSuc, int *urs1Suc, int *hupSuc, int *breakSuc){
 
 //install the handlers collectively, one failture will stop the whole program
 void installHandlerCol(int *return_code){
-	if(signal(SIGALRM, alarm_bells) == SIG_ERR || signal(SIGUSR1, printSysState) == SIG_ERR || signal(SIGHUP, reConfig) == SIG_ERR || signal(SIGINT, exitAll) == SIG_ERR){
+	if(signal(SIGALRM, alarm_bells) == SIG_ERR || signal(SIGUSR1, printSysState) == SIG_ERR || signal(SIGHUP, readConfig) == SIG_ERR || signal(SIGINT, exitAll) == SIG_ERR){
 		printf("Unable to install handler!\n");
 		*return_code=-1;
 	}
@@ -122,6 +132,7 @@ int main(int argc, char **argv){
 	char name[MAXLEN];
 	int lifeTime, runTime;
 	PCB *pcb;
+	
 
 	//For checking install status
 	int alrmSuc=1, urs1Suc=1, hupSuc=1, breakSuc=1;
@@ -139,39 +150,18 @@ int main(int argc, char **argv){
 	if(alrmSuc == 1 && urs1Suc == 1 && hupSuc == 1 && breakSuc == 1)
 		printf("All interrupt handlers are installed successfully, the program is good to go.\n");
 
-	//Open configuration file
-	FILE *fp=0;
-	fp=fopen("config.txt", "r");
-	
-	//check if something wrong when opening the file
-	if(fp == 0){
-		printf("Fail to open the file! Program will exit in 3 seconds.\n");
-		sleep(3);
-		exit(EXIT_FAILURE);
-	}
-	
-	char timerLine[MAXLEN];
-	if(fgets(timerLine, MAXLEN-1, fp) != NULL)
-		TIMER=timerLine[6]-'0';
-	
+	//update TIMER
+	readConfig();
 
-		
 
-	//Close file
-	int file_close_code=fclose(fp);
-	if(file_close_code != 0){
-		printf("Fail to close the file! Program will exit in 3 seconds.\n");
-		sleep(3);
-		exit(EXIT_FAILURE);
-	}
 
 	//Initialize system states queues
-	Queue newQ, readyQ, runQ, blockedQ, exitQ;
-	int newCheck=Queue_init(&newQ, "new");
-	int runCheck=Queue_init(&runQ, "run");
-	int readyCheck=Queue_init(&readyQ, "ready");
-	int blockedCheck=Queue_init(&blockedQ, "blocked");
-	int exitCheck=Queue_init(&exitQ, "exit");
+	List_t newQ, readyQ, runQ, blockedQ, exitQ;
+	int newCheck=List_init(&newQ, "new");
+	int runCheck=List_init(&runQ, "run");
+	int readyCheck=List_init(&readyQ, "ready");
+	int blockedCheck=List_init(&blockedQ, "blocked");
+	int exitCheck=List_init(&exitQ, "exit");
 	
 	if(!(newCheck && runCheck && readyCheck && blockedCheck && exitCheck)){
 		printf("Fail to initilize the state queues, program will terminate in 3 seconds.\n");
@@ -179,11 +169,11 @@ int main(int argc, char **argv){
 		exit(EXIT_FAILURE);
 	}
 
-	SYSSTATES->New=&newQ;
-	SYSSTATES->Ready=&readyQ;
-	SYSSTATES->Running=&runQ;
-	SYSSTATES->Blocked=&blockedQ;
-	SYSSTATES->Exit=&exitQ;
+	SYSSTATES.New=&newQ;
+	SYSSTATES.Ready=&readyQ;
+	SYSSTATES.Running=&runQ;
+	SYSSTATES.Blocked=&blockedQ;
+	SYSSTATES.Exit=&exitQ;
 	
 	/*
 	 *Codes contniue here
@@ -213,9 +203,10 @@ int main(int argc, char **argv){
 				//Terminates the string
 				pcb->name[MAXNAME-1]='\0';
 				pcb->lifeTime=lifeTime;
+				pcb->runningTime=runTime;
 
 				//If the process was not added to the queue
-				if(Queue_add_tail((void *) pcb, SYSSTATES->New) == 0)
+				if(List_add_tail((void *) pcb, SYSSTATES.New) == 0)
 					printf("Error in adding the process into the queue.\n");
 			}
 			else
@@ -223,7 +214,7 @@ int main(int argc, char **argv){
 
 		}
 		else
-			printf("Incorrect number of inputs!\n");
+			printf("Incorrect order of inputs!\n");
 
 
 	}
@@ -247,4 +238,5 @@ int read_line(char line[], int len) {
 
   return i;
 }
+
 

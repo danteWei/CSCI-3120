@@ -1,14 +1,19 @@
 
 /* File list.c implements a generic doubly-linked-list.  All data is
-   considered to be void pointers and is shuffled around as such. */
+   considered to be void pointers and is shuffled around as such. 
+   
+   Modified by Xinjing Wei
+   */
 
 #include <stdlib.h>
+#include <string.h>
 #include "list.h"
+#define MAXNAME (21)
 
 /* Initialize a list data structure */
 
 int  
-List_init ( List_t *list )
+List_init ( List_t *list, char *listName)
 {
   int all_ok = 0;
 
@@ -18,6 +23,7 @@ List_init ( List_t *list )
   if (list != NULL) {
     list->head = NULL;
     list->tail = NULL;
+    strncpy(list->name, listName, MAXNAME);
     all_ok = 1;
   }
 
@@ -44,6 +50,7 @@ List_destroy( List_t *list )
     }
     list->head = NULL;
     list->tail = NULL;
+    strncpy(list->name, NULL, MAXNAME-1);
   }
 }
 
@@ -73,7 +80,6 @@ List_add_tail ( List_t *list, void *data )
 	list->tail->next = new_node;
       }
       list->tail = new_node;
-
       all_ok = 1;
     }
   }
@@ -106,7 +112,6 @@ List_add_head ( List_t *list, void *data )
 	list->head->prev = new_node;
       }
       list->head = new_node;
-
       all_ok = 1;
     }
   }
@@ -140,7 +145,7 @@ List_remove_head ( List_t *list, void **data )
       }
 
       free( temp );
-
+      
       all_ok = 1;
     } else {
       *data = NULL;
@@ -294,5 +299,15 @@ List_add_after ( List_t *list, void **context, void *data )
   }
 
   return all_ok;
+}
+
+int List_size(List_t *list){
+	int size=0;
+	List_node_t *node=list->head;
+	while(node != NULL){
+		node=node->next;
+		size++;
+	}
+	return size;
 }
 
