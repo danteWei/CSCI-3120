@@ -26,21 +26,75 @@ SysState SYSSTATES;
 
 
 int TIMER=0;
+int runStateClock=0;
+int blockedClock=5;
+
+//move pcbs to the targeted queues
+int alarm_helper(){
+	int all_ok=1;
+	if(List_size(SYSSTATES.Running) != 0 && runStateClock == 0){
+		PCB *p=NULL;
+		if(List_head_info(SYSSTATES.Running, (void *) p) == 1){
+			if((*p).lifeTime == 0){
+				movePCB(SYSSTATES.Running, SYSSTATES.Exit);
+			}
+			else
+				movePCB(SYSSTATES.Running, SYSSTATES.Blocked);
+			p=NULL;
+		}
+		else{
+			printf("Error retrieving head data. ");
+			all_ok=0;
+		}	
+	}
+	
+	//Move all processes in the new queue to the ready queue
+	if(List_size(SYSSTATES.New) != 0){
+		List_node_t *curr=(SYSSTATES.New)->head;
+		while(curr != NULL){
+			curr=curr->next;
+			movePCB(SYSSTATES.New, SYSSTATES.Ready);
+		}
+		//printf("size of new %d; size of ready %d\n", List_size(SYSSTATES.New), List_size(SYSSTATES.Ready));
+	}
+
+	return all_ok;
+}
 
 //function for alarm interrupt
 void alarm_bells(int singal){
 	/*Start alarm*/
 	printf("alarm start\n");
-	//Move all processes in the new queue to the ready queue
-	if(List_size(SYSSTATES.New) != 0){
-		List_node_t *curr=(SYSSTATES.New)->head;
-		PCB *temp=NULL;
-		while(curr != NULL){
-			curr=curr->next;
-			List_remove_head(SYSSTATES.New, (void *)temp);
-			List_add_tail(SYSSTATES.Ready, (void *)&temp);
+	
+	//decrement clocks
+	if(runStateClock != 0)
+		runStateClock--;
+	else{ //If CPU has processed enough time for a process, move it to the blocked queue
+		if(List_size(SYSSTATES.Ready) != 0){
+			PCB *p=NULL;
+			List_head_info(SYSSTATES.Ready, (void *) p);
+			runStateClock=p->runningTime;
+			//The process that has finished running is not removed from the running queue
+			//but it will be in alaim_helper function
+			movePCB(SYSSTATES.Ready, SYSSTATES.Running);
 		}
 	}
+
+	if(blockedClock -= 0)
+		blockedClock--;
+	else{ //If a process has stay at the head of the blocked queue for 5 time unit, move it to the ready queue
+		if(List_size(SYSSTATES.Blocked) != 0)
+			movePCB(SYSSTATES.Blocked, SYSSTATES.Ready);
+		blockedClock=5;
+	}
+
+	//call the helper function
+	if(alarm_helper() == 0){
+		printf("Program will terminate in 3 seconds.\n");
+		sleep(3);
+		exit(EXIT_FAILURE);
+	}
+
 
 	alarm(TIMER);
 }
@@ -183,6 +237,8 @@ int main(int argc, char **argv){
 	//Set the alarm interrupt going
 	if(TIMER > 0)
 		alarm(TIMER);
+	else
+		printf("No timer is set or the timer is set to 0.\n");
 
 	//Listen to the keyboard inputs and update the queues
 	//The idea of most of the codes in the while loop are from parse.c written by Michael McAllister
@@ -198,6 +254,17 @@ int main(int argc, char **argv){
 
 		if(sscanf(line, "%s %d %d", name, &lifeTime, &runTime) == 3){
 			//printf("Process name: %s; Life time: %d; Run state time: %d\n", name, lifeTime, runTime);
+			//If the input is incorrect, promote user to input again
+			while((lifeTime < runTime || lifeTime < 0 || runTime <= 0)){
+				if(lifeTime < runTime)
+					printf("Process %s\'s lifetime cannot be less than its run time!\n", name);
+				else if(lifeTime < 0)
+					printf("Process %s\'s lifetime cannot be less than 0!\n", name);
+				else if(runTime <= 0)
+					printf("Process %s\'s run time cannot be less than or equal to 0!\n", name);
+				printf("Please try again with this format: <processname> <lifetime> <run time>\n");
+				sscanf(line, "%s %d %d", name, &lifeTime, &runTime);
+			}
 			pcb=(PCB *) malloc(sizeof(PCB));
 			if(pcb != NULL){
 				strncpy(pcb->name, name, MAXNAME-1);
@@ -207,7 +274,7 @@ int main(int argc, char **argv){
 				pcb->runningTime=runTime;
 
 				//If the process was not added to the queue
-				if(List_add_tail((void *) pcb, SYSSTATES.New) == 0)
+				if(List_add_tail( SYSSTATES.New, (void *) pcb ) == 0)
 					printf("Error in adding the process into the queue.\n");
 			}
 			else
@@ -240,4 +307,14 @@ int read_line(char line[], int len) {
   return i;
 }
 
+//Move a pcb from one queue to another
+int movePCB(List_t *fromL, List_t *toL){
+	int all_ok=0;
+	PCB *temp=NULL;	
+	int removeOK=List_remove_head(fromL, (void *)&temp);
+	int addOK=List_add_tail(toL, (void *)&temp);
+	if(removeOK == 1 && addOK == 1)
+		all_ok=1;
+	return all_ok;
 
+}
