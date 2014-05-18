@@ -29,7 +29,7 @@ void exitAll();
 void installHandlerInd(int *alrmSuc, int *urs1Suc, int *hupSuc, int *breakSuc);
 void installHandlerCol(int *return_code);
 int read_line(char line[], int len);
-void printPCB(PCB *pcb);
+void printPCBTransition(PCB *pcb, List_t *fromL, List_t *toL);
 int movePCB(List_t *fromL, List_t *toL);
 
 

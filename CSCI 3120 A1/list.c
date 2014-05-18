@@ -6,6 +6,7 @@
    */
 
 #include <stdlib.h>
+#include<stdio.h>
 #include <string.h>
 #include "list.h"
 #define MAXNAME (21)
@@ -164,7 +165,6 @@ int
 List_head_info ( List_t *list, void **data )
 {
   int all_ok = 0;
-
   *data = NULL;
   if ((list != NULL) && (list->head != NULL)) {
     *data = list->head->data;
@@ -303,10 +303,12 @@ List_add_after ( List_t *list, void **context, void *data )
 
 int List_size(List_t *list){
 	int size=0;
-	List_node_t *node=list->head;
-	while(node != NULL){
-		node=node->next;
-		size++;
+	if(list != NULL){
+		List_node_t *node=list->head;
+		while(node != NULL){
+			node=node->next;
+			size++;
+		}
 	}
 	return size;
 }
