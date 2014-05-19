@@ -39,6 +39,6 @@ McAllister for letting us use his codes. Some of the dieas in my program came
 from parse.c and other codes provided by Michael McAllister.
 
 
-Xinjing Wei
+Xinjing Wei<br/>
 May 19th, 2014
 
