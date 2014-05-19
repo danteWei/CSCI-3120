@@ -302,7 +302,7 @@ int main(int argc, char **argv){
 	//Initialize system states queues
 	List_t newQ, readyQ, runQ, blockedQ, exitQ;
 	int newCheck=List_init(&newQ, "new");
-	int runCheck=List_init(&runQ, "run");
+	int runCheck=List_init(&runQ, "running");
 	int readyCheck=List_init(&readyQ, "ready");
 	int blockedCheck=List_init(&blockedQ, "blocked");
 	int exitCheck=List_init(&exitQ, "exit");
