@@ -39,7 +39,7 @@ void
 List_destroy( List_t *list )
 {
   List_node_t *temp = NULL;
-
+  printf("Hi\n");
   /* Free up all the nodes that currently exist in the list then reset
      the list information as if the list was just initialized. */
 
@@ -51,7 +51,6 @@ List_destroy( List_t *list )
     }
     list->head = NULL;
     list->tail = NULL;
-    strncpy(list->name, NULL, MAXNAME-1);
   }
 }
 

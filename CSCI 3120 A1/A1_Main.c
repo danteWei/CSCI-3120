@@ -21,24 +21,27 @@
 #define MAXLEN (81)
 #define MAXNAME (21)
 
+//Global variables
 SysState SYSSTATES;
 
-
-
-int TIMER=0;
+int TIMER=0, tmp=0;
 int runStateClock=0;
-int runningProcessLifetime=0;
+
+//Update lifetime duration
+int *runningProcessLifetime=&tmp;
 int blockedClock=5;
 
 //move pcbs to the targeted queues
 int alarm_helper(){
 	int all_ok=1;
-	if(List_size(SYSSTATES.Running) != 0 && (runStateClock == 0 || runningProcessLifetime == 0)){
+	//If time's up, remove it from running state
+	if(List_size(SYSSTATES.Running) != 0 && (runStateClock == 0 || *runningProcessLifetime == 0)){
 		PCB *p=NULL;
 		if(List_head_info(SYSSTATES.Running, (void *) &p) == 1){
+			//If lifetime is 0, move it to exit state
 			if((*p).lifeTime == 0)
 				movePCB(SYSSTATES.Running, SYSSTATES.Exit);
-			
+			//Else, move it to blocked state
 			else
 				movePCB(SYSSTATES.Running, SYSSTATES.Blocked);
 			p=NULL;
@@ -55,6 +58,24 @@ int alarm_helper(){
 		while(curr != NULL){
 			curr=curr->next;
 			movePCB(SYSSTATES.New, SYSSTATES.Ready);
+
+			//If there is no process in the running state, move one from ready state
+			if(List_size(SYSSTATES.Running) == 0){
+				movePCB(SYSSTATES.Ready, SYSSTATES.Running);
+				PCB *p=NULL;
+				if(List_head_info(SYSSTATES.Running, (void *) &p)){
+					
+					//Update clocks
+					runStateClock=p->runningTime;
+					runningProcessLifetime=&(p->lifeTime);
+				}
+				else{
+					printf("Error retrieving data. Program will terminate in 3 seconds.\n");
+					sleep(3);
+					exit(EXIT_FAILURE);
+				}
+
+			}
 		}
 		//printf("size of new %d; size of ready %d\n", List_size(SYSSTATES.New), List_size(SYSSTATES.Ready));
 	}
@@ -68,16 +89,19 @@ void alarm_bells(int singal){
 	printf("alarm start\n");
 	
 	//decrement clocks
-	if(runStateClock != 0 && runningProcessLifetime != 0){
+	if(runStateClock != 0 && *runningProcessLifetime != 0){
+		printf("%d %d\n", runStateClock, *runningProcessLifetime);
 		runStateClock--;
-		runningProcessLifetime--;
+		(*runningProcessLifetime)--;
 	}
 	else{ //If CPU has processed enough time for a process, move it to the blocked queue
 		if(List_size(SYSSTATES.Ready) != 0){
 			PCB *p=NULL;
 			if(List_head_info(SYSSTATES.Ready, (void *) &p)){
+
+				//Update clocks
 				runStateClock=p->runningTime;
-				runningProcessLifetime=p->lifeTime;
+				runningProcessLifetime=&(p->lifeTime);
 				//The process that has finished running is not removed from the running queue
 				//but it will be in alaim_helper function
 				movePCB(SYSSTATES.Ready, SYSSTATES.Running);
@@ -90,13 +114,32 @@ void alarm_bells(int singal){
 		}
 	}
 
+	//decrement clock for blocked queue
 	if(blockedClock != 0)
 		blockedClock--;
 	else{ //If a process has stay at the head of the blocked queue for 5 time unit, move it to the ready queue
 		if(List_size(SYSSTATES.Blocked) != 0){
 			movePCB(SYSSTATES.Blocked, SYSSTATES.Ready);
 
+			//If there is no process in the running state, move one from ready state
+			if(List_size(SYSSTATES.Running) == 0){
+				movePCB(SYSSTATES.Ready, SYSSTATES.Running);
+				PCB *p=NULL;
+				if(List_head_info(SYSSTATES.Running, (void *) &p)){
+
+					//Update clocks
+					runStateClock=p->runningTime;
+					runningProcessLifetime=&(p->lifeTime);
+				}
+				else{
+					printf("Error retrieving data. Program will terminate in 3 seconds.\n");
+					sleep(3);
+					exit(EXIT_FAILURE);
+				}
+			}
 		}
+
+		//Reset block clock
 		blockedClock=5;
 	}
 
@@ -111,50 +154,86 @@ void alarm_bells(int singal){
 	alarm(TIMER);
 }
 
+//helper function for printSysState
+void printState(List_t *list){
+	PCB *context=NULL, *curr=NULL;
+	char *lName=list->name;
+	printf("%s: \n", lName);
+	if(List_size(list) == 0)
+		printf("\tEmpty\n");
+	else{
+		int all_ok=1;
+		all_ok=List_next_node(list, (void *)&context, (void *)&curr);
+		while(curr != NULL && all_ok == 1){
+			printPCB(curr);
+			all_ok=List_next_node(list, (void *)&context, (void *)&curr);
+		}
+		if(all_ok != 1)
+			printf("Error in finding the next node.\n");
+		
+	}
+
+}
+
 //function for urs1 interrupt
 void printSysState(){
 	/*Print information of all queues*/
+	printState(SYSSTATES.New);
+	printState(SYSSTATES.Ready);
+	printState(SYSSTATES.Running);
+	printState(SYSSTATES.Blocked);
+	printState(SYSSTATES.Exit);
 }
 
 //function for hup interrupt
 void readConfig(){
+	int fileCheck=1;
 	//Open configuration file
 	FILE *fp=0;
-	fp=fopen("config.txt", "r");
+	fp=fopen("./config.txt", "r");
 
 	//check if something wrong when opening the file
 	if(fp == 0){
-		printf("Fail to open the file, please check the file name! Program will exit in 3 seconds.\n");
-		sleep(3);
-		exit(EXIT_FAILURE);
+		printf("Fail to find the configauration file! The timer remains unchanged.\n");
+		fileCheck=0;
 	}
 
 	//Read timer from config.txt
-	char timerLine[MAXLEN];
-	if(fgets(timerLine, MAXLEN-1, fp) != NULL)
-		TIMER=timerLine[6]-'0';
-
-	//close file
-	if(fclose(fp) != 0){
-		printf("Fail to close the file! Program will exit in 3 seconds.\n");
-		sleep(3);
-		exit(EXIT_FAILURE);
+	if(fileCheck  == 1){
+		char timerLine[MAXLEN];
+		if(fgets(timerLine, MAXLEN-1, fp) != NULL){
+			if(TIMER != timerLine[6]-'0')
+				printf("\nThe time unit is set to: %c second(s).\n", timerLine[6]);
+			TIMER=timerLine[6]-'0';
+		}
+	
+		//close file
+		if(fclose(fp) != 0){
+			printf("Fail to close the file! Program will exit in 3 seconds.\n");
+			sleep(3);
+			exit(EXIT_FAILURE);
+		}
 	}
 }
 
 //function for break interrupt
 void exitAll(){
-	//Destroy all Queues
-	List_destroy(SYSSTATES.New);
-	List_destroy(SYSSTATES.Ready);
-	List_destroy(SYSSTATES.Running);
-	List_destroy(SYSSTATES.Blocked);
-	List_destroy(SYSSTATES.Exit);
+	//Destroy all Queues, if there are any PCBs
+	if(List_size(SYSSTATES.New) != 0)
+		List_destroy(SYSSTATES.New);
+	if(List_size(SYSSTATES.Ready) != 0)
+		List_destroy(SYSSTATES.Ready);
+	if(List_size(SYSSTATES.Running) != 0)
+		List_destroy(SYSSTATES.Running);
+	if(List_size(SYSSTATES.Blocked) != 0)
+		List_destroy(SYSSTATES.Blocked);
+	if(List_size(SYSSTATES.Exit) != 0)
+		List_destroy(SYSSTATES.Exit);
 
 	/*Free other memory allocations*/
 
 
-	printf("All memory space are freed, program will terminate in 3 seconds");
+	printf("All memory space are freed, program will terminate in 3 seconds\n");
 	sleep(3);
 	//Exit successfullly
 	exit(EXIT_SUCCESS);
@@ -192,12 +271,11 @@ void installHandlerCol(int *return_code){
 
 //Main function
 int main(int argc, char **argv){
-	int return_code=0;
-	int timer;
-	char line[MAXLEN];
-	char name[MAXLEN];
-	int lifeTime, runTime;
-	PCB *pcb;
+	int return_code=0; //determine the exiting code
+	char line[MAXLEN]; //stores the input from stdin
+	char name[MAXLEN]; //stores the name of the input process
+	int lifeTime, runTime; //stores the lifetime and runing state time of the input process
+	PCB *pcb; //a pointer points to a PCB object, used to store the process read from stdin
 	
 
 	//For checking install status
@@ -229,21 +307,20 @@ int main(int argc, char **argv){
 	int blockedCheck=List_init(&blockedQ, "blocked");
 	int exitCheck=List_init(&exitQ, "exit");
 	
+	//Check if all queues are initialized successfully
 	if(!(newCheck && runCheck && readyCheck && blockedCheck && exitCheck)){
 		printf("Fail to initilize the state queues, program will terminate in 3 seconds.\n");
 		sleep(3);
 		exit(EXIT_FAILURE);
 	}
 
+	//Let them point to the newly initialized queues
 	SYSSTATES.New=&newQ;
 	SYSSTATES.Ready=&readyQ;
 	SYSSTATES.Running=&runQ;
 	SYSSTATES.Blocked=&blockedQ;
 	SYSSTATES.Exit=&exitQ;
 	
-	/*
-	 *Codes contniue here
-	 */
 
 
 	//Set the alarm interrupt going
@@ -336,4 +413,8 @@ int movePCB(List_t *fromL, List_t *toL){
 //Print the information of a process that has been moved from one state to another
 void printPCBTransition(PCB *pcb, List_t *fromL, List_t *toL){
 	printf("%s transition from %s to %s\n", pcb->name, fromL->name, toL->name);
+}
+
+void printPCB(PCB *p){
+	printf("\t%s %d\n", p->name, p->lifeTime);
 }

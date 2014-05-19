@@ -31,6 +31,7 @@ void installHandlerCol(int *return_code);
 int read_line(char line[], int len);
 void printPCBTransition(PCB *pcb, List_t *fromL, List_t *toL);
 int movePCB(List_t *fromL, List_t *toL);
-
+void printPCB(PCB *p);
+void printState(List_t *list);
 
 #endif
