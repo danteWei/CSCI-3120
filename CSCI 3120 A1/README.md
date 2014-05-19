@@ -4,7 +4,7 @@ The main file "A1_Main.c" implements the tasks listed on the assignment 1.
 I could take PCB structure out and make it a separate class, but I didn't
 because I think it is unnecessary.
 ***
-The program will run on its own until it received a <code>Ctrl+C</code> command from
+The program will run on its own until it receives a <code>Ctrl+C</code> command from
 keyboard. Once it receives the command, it will deallocate all memories it
 created and then quit in 3 seconds.
 
