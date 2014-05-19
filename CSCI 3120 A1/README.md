@@ -4,14 +4,14 @@ The main file "A1_Main.c" implements the tasks listed on the assignment 1.
 I could take PCB structure out and make it a separate class, but I didn't
 because I think it is unnecessary.
 ***
-The program will run on its own until it received a "Ctrl+C" command from
+The program will run on its own until it received a <code>Ctrl+C</code> command from
 keyboard. Once it received the command, it will deallocate all memories it
 created and then quit in 3 seconds.
 
 USAGE:
 --------
-When first time use it, compile it first using "make" command to make sure the
-executable is up to date, then involk the program using "./A1Exec" command.
+When first time use it, compile it first using <code>make</code> command to make sure the
+executable is up to date, then involk the program using <code>./A1Exec</code> command.
 
 I set the alarm interrupt to print "alarm start" every time it interrupts the
 prgroam, so that we know it is interrupted. If you need to trigger any other
