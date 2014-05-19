@@ -90,7 +90,6 @@ void alarm_bells(int singal){
 	
 	//decrement clocks
 	if(runStateClock != 0 && *runningProcessLifetime != 0){
-		printf("%d %d\n", runStateClock, *runningProcessLifetime);
 		runStateClock--;
 		(*runningProcessLifetime)--;
 	}
@@ -275,7 +274,7 @@ int main(int argc, char **argv){
 	char line[MAXLEN]; //stores the input from stdin
 	char name[MAXLEN]; //stores the name of the input process
 	int lifeTime, runTime; //stores the lifetime and runing state time of the input process
-	PCB *pcb; //a pointer points to a PCB object, used to store the process read from stdin
+	
 	
 
 	//For checking install status
@@ -332,6 +331,7 @@ int main(int argc, char **argv){
 	//Listen to the keyboard inputs and update the queues
 	//The idea of most of the codes in the while loop are from parse.c written by Michael McAllister
 	while(1){
+		PCB *pcb; //a pointer points to a PCB object, used to store the process read from stdin
 		//Get line from keyboard with max string length
 		fgets(line, MAXLEN-1, stdin);
 		

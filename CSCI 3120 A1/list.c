@@ -6,7 +6,6 @@
    */
 
 #include <stdlib.h>
-#include<stdio.h>
 #include <string.h>
 #include "list.h"
 #define MAXNAME (21)
@@ -39,7 +38,6 @@ void
 List_destroy( List_t *list )
 {
   List_node_t *temp = NULL;
-  printf("Hi\n");
   /* Free up all the nodes that currently exist in the list then reset
      the list information as if the list was just initialized. */
 
