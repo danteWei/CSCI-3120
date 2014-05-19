@@ -15,7 +15,7 @@ executable is up to date, then involk the program using "./A1Exec" command.
 
 I set the alarm interrupt to print "alarm start" every time it interrupts the
 prgroam, so that we know it is interrupted. If you need to trigger any other
-interrupt except SIGINT, use the following command "kill -s <signal name> pid"
+interrupt except SIGINT, use the following command <code>kill -s \<signal name\> pid</code>
 to involk it.
 
 Return Codes:
