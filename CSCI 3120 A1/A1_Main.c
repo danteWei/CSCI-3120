@@ -323,7 +323,7 @@ int main(int argc, char **argv){
 
 
 	//Set the alarm interrupt going
-	if(TIMER > 0)
+	if(TIMER >= 0)
 		alarm(TIMER);
 	else
 		printf("No timer is set or the timer is set to 0.\n");
