@@ -201,9 +201,12 @@ void readConfig(){
 	if(fileCheck  == 1){
 		char timerLine[MAXLEN];
 		if(fgets(timerLine, MAXLEN-1, fp) != NULL){
-			if(TIMER != timerLine[6]-'0')
+			if(TIMER != timerLine[6]-'0'){
 				printf("\nThe time unit is set to: %c second(s).\n", timerLine[6]);
-			TIMER=timerLine[6]-'0';
+				TIMER=timerLine[6]-'0';
+			}
+			else
+				printf("The timer in configuration file is not changed, system timer remains unchanged.\n");
 		}
 	
 		//close file
@@ -323,7 +326,7 @@ int main(int argc, char **argv){
 
 
 	//Set the alarm interrupt going
-	if(TIMER >= 0)
+	if(TIMER > 0)
 		alarm(TIMER);
 	else
 		printf("No timer is set or the timer is set to 0.\n");
