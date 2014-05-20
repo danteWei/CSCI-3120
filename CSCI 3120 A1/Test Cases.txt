@@ -258,11 +258,37 @@ Fail to find the configauration file! The timer remains unchanged.
 No timer is set or the timer is set to 0.
 ^CAll memory space are freed, program will terminate in 3 seconds
 
-Test Case 4 (Negative timer):
+Test Case 4 (Lifetime < run state time):
 
 All interrupt handlers are installed successfully, the program is good to go.
 
-The time unit is set to: - second(s).
-No timer is set or the timer is set to 0.
+The time unit is set to: 5 second(s).
+a 3 5
+b 4 2
+alarm start
+a transition from new to ready
+a transition from ready to running
+b transition from new to ready
+alarm start
+alarm start
+alarm start
+a transition from running to exit
+b transition from ready to running
+alarm start
+alarm start
+b transition from running to blocked
+alarm start
+alarm start
+alarm start
+alarm start
+alarm start
+alarm start
+b transition from blocked to ready
+b transition from ready to running
+alarm start
+alarm start
+b transition from running to exit
+alarm start
+alarm start
+alarm start
 ^CAll memory space are freed, program will terminate in 3 seconds
-

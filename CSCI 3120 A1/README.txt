@@ -8,6 +8,9 @@ The program will run on its own until it received a "Ctrl+C" command from
 keyboard. Once it received the command, it will deallocate all memories it
 created and then quit in 3 seconds.
 
+**Please note that I do have a new queue, and the input processes will only be
+moved to ready queue when the alarm interrupt is triggered!**
+
 USAGE:
 --------
 When first time use it, compile it first using "make" command to make sure the

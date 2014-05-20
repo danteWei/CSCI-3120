@@ -4,9 +4,12 @@ The main file "A1_Main.c" implements the tasks listed on the assignment 1.
 I could take PCB structure out and make it a separate class, but I didn't
 because I think it is unnecessary.
 ***
-The program will run on its own until it receives a <code>Ctrl+C</code> command from
-keyboard. Once it receives the command, it will deallocate all memories it
+The program will run on its own until it received a <code>Ctrl+C</code> command from
+keyboard. Once it received the command, it will deallocate all memories it
 created and then quit in 3 seconds.
+
+**Please note that I do have a new queue, and the input processes will only be
+moved to ready queue when the alarm interrupt is triggered!**
 
 USAGE:
 --------
@@ -15,7 +18,7 @@ executable is up to date, then involk the program using <code>./A1Exec</code> co
 
 I set the alarm interrupt to print "alarm start" every time it interrupts the
 prgroam, so that we know it is interrupted. If you need to trigger any other
-interrupt except SIGINT, use the following command <code>kill -s \<*signal name*\> pid</code>
+interrupt except SIGINT, use the following command <code>kill -s \<signal name\> pid</code>
 to involk it.
 
 Return Codes:
@@ -32,13 +35,13 @@ not be hard to understand my program.
 
 References:
 --------
-list.c, list.h and list.txt are written by **Professor Michael McAllister**, I did
+list.c, list.h and list.txt are written by Professor Michael McAllister, I did
 make some changes to them (List_size() function, and added some attributes to
 some of the data structures), but not much. I thank Professor Michael
 McAllister for letting us use his codes. Some of the dieas in my program came
 from parse.c and other codes provided by Michael McAllister.
 
 
-Xinjing Wei<br/>
-May 19th, 2014
+Xinjing Wei
+
 

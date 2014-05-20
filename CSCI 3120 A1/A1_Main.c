@@ -39,12 +39,25 @@ int alarm_helper(){
 		PCB *p=NULL;
 		if(List_head_info(SYSSTATES.Running, (void *) &p) == 1){
 			//If lifetime is 0, move it to exit state
-			if((*p).lifeTime == 0)
+			if((*p).lifeTime == 0){
 				movePCB(SYSSTATES.Running, SYSSTATES.Exit);
+				
+				//If the ready queue is not empty, move one process to the running queue
+				if(List_size(SYSSTATES.Ready) != 0){
+					movePCB(SYSSTATES.Ready, SYSSTATES.Running);
+					if(List_head_info(SYSSTATES.Running, (void *)&p)){
+						//Update clocks
+						runStateClock=p->runningTime;
+						runningProcessLifetime=&(p->lifeTime);
+					}
+				}
+			}
 			//Else, move it to blocked state
 			else
 				movePCB(SYSSTATES.Running, SYSSTATES.Blocked);
 			p=NULL;
+
+			
 		}
 		else{
 			printf("Error retrieving head data. ");
@@ -114,9 +127,9 @@ void alarm_bells(int singal){
 	}
 
 	//decrement clock for blocked queue
-	if(blockedClock != 0)
+	if(blockedClock != 0 && List_size(SYSSTATES.Blocked) != 0)
 		blockedClock--;
-	else{ //If a process has stay at the head of the blocked queue for 5 time unit, move it to the ready queue
+	else if(blockedClock == 0){ //If a process has stay at the head of the blocked queue for 5 time unit, move it to the ready queue
 		if(List_size(SYSSTATES.Blocked) != 0){
 			movePCB(SYSSTATES.Blocked, SYSSTATES.Ready);
 
@@ -141,6 +154,8 @@ void alarm_bells(int singal){
 		//Reset block clock
 		blockedClock=5;
 	}
+	else
+		blockedClock=5;
 
 	//call the helper function
 	if(alarm_helper() == 0){
@@ -148,7 +163,6 @@ void alarm_bells(int singal){
 		sleep(3);
 		exit(EXIT_FAILURE);
 	}
-
 
 	alarm(TIMER);
 }
@@ -235,7 +249,7 @@ void exitAll(){
 	/*Free other memory allocations*/
 
 
-	printf("All memory space are freed, program will terminate in 3 seconds\n");
+	printf("\nAll memory space are freed, program will terminate in 3 seconds\n");
 	sleep(3);
 	//Exit successfullly
 	exit(EXIT_SUCCESS);
@@ -347,10 +361,8 @@ int main(int argc, char **argv){
 		if(sscanf(line, "%s %d %d", name, &lifeTime, &runTime) == 3){
 			//printf("Process name: %s; Life time: %d; Run state time: %d\n", name, lifeTime, runTime);
 			//If the input is incorrect, promote user to input again
-			while((lifeTime < runTime || lifeTime < 0 || runTime <= 0)){
-				if(lifeTime < runTime)
-					printf("Process %s\'s lifetime cannot be less than its run time!\n", name);
-				else if(lifeTime < 0)
+			while((lifeTime <= 0 || runTime <= 0)){
+				if(lifeTime < 0)
 					printf("Process %s\'s lifetime cannot be less than 0!\n", name);
 				else if(runTime <= 0)
 					printf("Process %s\'s run time cannot be less than or equal to 0!\n", name);
@@ -375,13 +387,7 @@ int main(int argc, char **argv){
 		}
 		else
 			printf("Incorrect order of inputs!\n");
-
-
 	}
-
-	
-
-
 
 	return return_code;
 }
