@@ -14,12 +14,12 @@ moved to ready queue when the alarm interrupt is triggered!**
 USAGE:
 --------
 When first time use it, compile it first using "make" command to make sure the
-executable is up to date, then involk the program using "./A1Exec" command.
+executable is up to date, then invoke the program using "./A1Exec" command.
 
 I set the alarm interrupt to print "alarm start" every time it interrupts the
 prgroam, so that we know it is interrupted. If you need to trigger any other
 interrupt except SIGINT, use the following command "kill -s <signal name> pid"
-to involk it.
+to invoke it.
 
 Return Codes:
 --------
