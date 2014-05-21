@@ -351,6 +351,13 @@ void printSysState(){
 
 //function for hup interrupt
 void readConfig(){
+	//check if TIMER is set from 0 to a positive integer, 
+	//if it is, we need to trigger an alarm interrupt
+	int flag=0;
+	
+	if(TIMER == 0)
+		flag=1;
+
 	int fileCheck=1;
 	//Open configuration file
 	FILE *fp=0;
@@ -381,6 +388,9 @@ void readConfig(){
 			exit(EXIT_FAILURE);
 		}
 	}
+
+	if(flag == 1)
+		alarm(TIMER);
 }
 
 //function for break interrupt
