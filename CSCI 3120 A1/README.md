@@ -2,7 +2,7 @@ Assignment 1 Documentation
 ===
 The main file "A1_Main.c" implements the tasks listed on the assignment 1.
 I could take PCB structure out and make it a separate class, but I didn't
-because I think it is unnecessary.
+because I think it is unnecessary. [This is the link that explains how list work](list.md).
 ***
 The program will run on its own until it received a <code>Ctrl+C</code> command from
 keyboard. Once it received the command, it will deallocate all memories it
