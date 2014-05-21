@@ -2,150 +2,159 @@ Test Case 1 (USR1):
 
 All interrupt handlers are installed successfully, the program is good to go.
 
-The time unit is set to: 3 second(s).
+The time unit is set to: 5 second(s).
+a 3 5
+b 4 2
 alarm start
-alarm start
-a 3 1
-b 4 alarm start
 a transition from new to ready
 a transition from ready to running
-2
-c alarm start
-a transition from running to blocked
 b transition from new to ready
+alarm start
+alarm start
+alarm start
+a transition from running to exit
 b transition from ready to running
 alarm start
-c transition from new to ready
 alarm start
-a transition from blocked to ready
 b transition from running to blocked
 alarm start
-c transition from ready to running
 alarm start
-c transition from running to blocked
 alarm start
-a transition from ready to running
 alarm start
-a transition from running to blocked
 alarm start
 alarm start
 b transition from blocked to ready
 b transition from ready to running
+new: 
+	Empty
+ready: 
+	Empty
+running: 
+	b 2
+blocked: 
+	Empty
+exit: 
+	a 0
 alarm start
 alarm start
 b transition from running to exit
 alarm start
 alarm start
+new: 
+	Empty
+ready: 
+	Empty
+running: 
+	Empty
+blocked: 
+	Empty
+exit: 
+	a 0
+	b 0
 alarm start
 alarm start
-c transition from blocked to ready
-c transition from ready to running
-alarm start
-c transition from running to blocked
-alarm start
-alarm start
-alarm start
-alarm start
-alarm start
-a transition from blocked to ready
+^C
+All memory space are freed, program will terminate in 3 seconds
+Dantes-Macbook:CSCI 3120 A1 Dante$ clear
+
+Dantes-Macbook:CSCI 3120 A1 Dante$ ./A1Exec
+All interrupt handlers are installed successfully, the program is good to go.
+
+The time unit is set to: 5 second(s).
+a 1 3
+b 4 2
+c alarm start
+a transition from new to ready
 a transition from ready to running
+b transition from new to ready
+5 3
 alarm start
 a transition from running to exit
+b transition from ready to running
+c transition from new to ready
 alarm start
+alarm start
+b transition from running to blocked
 new: 
 	Empty
 ready: 
-	Empty
+	c 5
 running: 
 	Empty
 blocked: 
-	c 4
+	b 2
 exit: 
-	b 0
 	a 0
 alarm start
-alarm start
-alarm start
-alarm start
-c transition from blocked to ready
 c transition from ready to running
+alarm start
+alarm start
 alarm start
 c transition from running to blocked
 alarm start
 alarm start
-D 4 2
+b transition from blocked to ready
+b transition from ready to running
 alarm start
-D transition from new to ready
-D transition from ready to running
+e 6 3
+alarm start
+b transition from running to exit
+e transition from new to ready
+e transition from ready to running
 alarm start
 new: 
 	Empty
 ready: 
 	Empty
 running: 
-	D 3
-blocked: 
-	c 3
-exit: 
-	b 0
-	a 0
-alarm start
-c transition from blocked to ready
-D transition from running to blocked
-alarm start
-c transition from ready to running
-alarm start
-c transition from running to blocked
-alarm start
-alarm start
-alarm start
-alarm start
-D transition from blocked to ready
-D transition from ready to running
-new: 
-	Empty
-ready: 
-	Empty
-running: 
-	D 2
+	e 5
 blocked: 
 	c 2
 exit: 
-	b 0
 	a 0
+	b 0
 alarm start
 alarm start
-D transition from running to exit
-alarm start
-alarm start
-alarm start
+e transition from running to blocked
 alarm start
 c transition from blocked to ready
 c transition from ready to running
-alarm start
-c transition from running to blocked
 new: 
 	Empty
 ready: 
 	Empty
 running: 
-	Empty
+	c 2
 blocked: 
-	c 1
+	e 3
 exit: 
-	b 0
 	a 0
-	D 0
+	b 0
 alarm start
-alarm start
-alarm start
-alarm start
-alarm start
-c transition from blocked to ready
-c transition from ready to running
 alarm start
 c transition from running to exit
 alarm start
+alarm start
+alarm start
+alarm start
+e transition from blocked to ready
+e transition from ready to running
+alarm start
+new: 
+	Empty
+ready: 
+	Empty
+running: 
+	e 2
+blocked: 
+	Empty
+exit: 
+	a 0
+	b 0
+	c 0
+alarm start
+alarm start
+e transition from running to exit
 new: 
 	Empty
 ready: 
@@ -155,91 +164,37 @@ running:
 blocked: 
 	Empty
 exit: 
-	b 0
 	a 0
-	D 0
+	b 0
 	c 0
+	e 0
 alarm start
-alarm start
-^CAll memory space are freed, program will terminate in 3 seconds
-alarm start
+^C
+All memory space are freed, program will terminate in 3 seconds
 
 
 Test Case 2 (HUP):
 
 All interrupt handlers are installed successfully, the program is good to go.
 
-The time unit is set to: 3 second(s).
-a alarm start
-a 4 1
-Incorrect order of inputs!
-alarm start
+The time unit is set to: 5 second(s).
 a 4 1
 alarm start
 a transition from new to ready
 a transition from ready to running
-b 5 2
 alarm start
 a transition from running to blocked
+alarm start
+b 5 2
+alarm start
 b transition from new to ready
 b transition from ready to running
-c 6 3
 alarm start
-c transition from new to ready
 alarm start
-a transition from blocked to ready
 b transition from running to blocked
-alarm start
-c transition from ready to running
-alarm start
-alarm start
-alarm start
-c transition from running to blocked
-alarm start
-a transition from ready to running
 
 The time unit is set to: 1 second(s).
 alarm start
-b transition from blocked to ready
-a transition from running to blocked
-alarm start
-b transition from ready to running
-alarm start
-alarm start
-b transition from running to blocked
-alarm start
-alarm start
-alarm start
-c transition from blocked to ready
-c transition from ready to running
-alarm start
-alarm start
-new: 
-	Empty
-ready: 
-	Empty
-running: 
-	c 1
-blocked: 
-	a 2
-	b 1
-exit: 
-	Empty
-alarm start
-c transition from running to exit
-alarm start
-alarm start
-new: 
-	Empty
-ready: 
-	Empty
-running: 
-	Empty
-blocked: 
-	a 2
-	b 1
-exit: 
-	c 0
 alarm start
 a transition from blocked to ready
 a transition from ready to running
@@ -247,9 +202,58 @@ alarm start
 a transition from running to blocked
 alarm start
 alarm start
-^CAll memory space are freed, program will terminate in 3 seconds
 alarm start
-
+alarm start
+alarm start
+b transition from blocked to ready
+b transition from ready to running
+alarm start
+alarm start
+b transition from running to blocked
+alarm start
+new: 
+	Empty
+ready: 
+	Empty
+running: 
+	Empty
+blocked: 
+	a 2
+	b 1
+exit: 
+	Empty
+alarm start
+alarm start
+alarm start
+a transition from blocked to ready
+a transition from ready to running
+alarm start
+a transition from running to blocked
+alarm start
+alarm start
+alarm start
+alarm start
+alarm start
+b transition from blocked to ready
+b transition from ready to running
+alarm start
+b transition from running to exit
+alarm start
+alarm start
+new: 
+	Empty
+ready: 
+	Empty
+running: 
+	Empty
+blocked: 
+	a 1
+exit: 
+	b 0
+alarm start
+alarm start
+^C
+All memory space are freed, program will terminate in 3 seconds
 
 Test Case 3 (config.txt not found):
 
@@ -277,7 +281,6 @@ b transition from ready to running
 alarm start
 alarm start
 b transition from running to blocked
-alarm start
 alarm start
 alarm start
 alarm start

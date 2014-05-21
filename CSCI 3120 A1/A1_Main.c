@@ -31,10 +31,119 @@ int runStateClock=0;
 int *runningProcessLifetime=&tmp;
 int blockedClock=5;
 
-//move pcbs to the targeted queues
-int alarm_helper(){
+//Main function
+int main(int argc, char **argv){
+	int return_code=0; //determine the exiting code
+	
+	//For checking install status
+	int alrmSuc=1, urs1Suc=1, hupSuc=1, breakSuc=1;
+
+	//Install the handlers
+	installHandlerInd(&alrmSuc, &urs1Suc, &hupSuc, &breakSuc);
+
+	//If all installation fail, exit the program with error code -1
+	if(alrmSuc == -1 && urs1Suc == -1 && hupSuc == -1 && breakSuc == -1){
+		printf("All installatioin failed! Program will exit in 3 seconds.\n");
+		sleep(3);
+		exit(EXIT_FAILURE);
+	}
+
+	if(alrmSuc == 1 && urs1Suc == 1 && hupSuc == 1 && breakSuc == 1)
+		printf("All interrupt handlers are installed successfully, the program is good to go.\n");
+
+	//update TIMER
+	readConfig();
+
+
+
+	//Initialize system states queues
+	List_t newQ, readyQ, runQ, blockedQ, exitQ;
+	int newCheck=List_init(&newQ, "new");
+	int runCheck=List_init(&runQ, "running");
+	int readyCheck=List_init(&readyQ, "ready");
+	int blockedCheck=List_init(&blockedQ, "blocked");
+	int exitCheck=List_init(&exitQ, "exit");
+	
+	//Check if all queues are initialized successfully
+	if(!(newCheck && runCheck && readyCheck && blockedCheck && exitCheck)){
+		printf("Fail to initilize the state queues, program will terminate in 3 seconds.\n");
+		sleep(3);
+		exit(EXIT_FAILURE);
+	}
+
+	//Let them point to the newly initialized queues
+	SYSSTATES.New=&newQ;
+	SYSSTATES.Ready=&readyQ;
+	SYSSTATES.Running=&runQ;
+	SYSSTATES.Blocked=&blockedQ;
+	SYSSTATES.Exit=&exitQ;
+	
+
+
+	//Set the alarm interrupt going
+	if(TIMER > 0)
+		alarm(TIMER);
+	else
+		printf("No timer is set or the timer is set to 0.\n");
+
+	//Listen to the keyboard inputs and update the queues
+	//The idea of most of the codes in the while loop are from parse.c written by Michael McAllister
+	while(1){
+		read_stdin();
+	}
+
+	return return_code;
+}
+
+
+void read_stdin(){
+	char line[MAXLEN]; //stores the input from stdin
+	char name[MAXLEN]; //stores the name of the input process
+	int lifeTime, runTime; //stores the lifetime and runing state time of the input process
+	PCB *pcb; //a pointer points to a PCB object, used to store the process read from stdin
+		//Get line from keyboard with max string length
+		fgets(line, MAXLEN-1, stdin);
+		
+		//Check if the input is read and is of the correct format
+		while(line == NULL){
+			printf("No input is read from keyboard or the input format is incorrect, please try it again.\n");
+			fgets(line, MAXLEN-1, stdin);
+		}
+
+		if(sscanf(line, "%s %d %d", name, &lifeTime, &runTime) == 3){
+			//printf("Process name: %s; Life time: %d; Run state time: %d\n", name, lifeTime, runTime);
+			//If the input is incorrect, promote user to input again
+			while((lifeTime <= 0 || runTime <= 0)){
+				if(lifeTime < 0)
+					printf("Process %s\'s lifetime cannot be less than 0!\n", name);
+				else if(runTime <= 0)
+					printf("Process %s\'s run time cannot be less than or equal to 0!\n", name);
+				printf("Please try again with this format: <processname> <lifetime> <run time>\n");
+				sscanf(line, "%s %d %d", name, &lifeTime, &runTime);
+			}
+			pcb=(PCB *) malloc(sizeof(PCB));
+			if(pcb != NULL){
+				strncpy(pcb->name, name, MAXNAME-1);
+				//Terminates the string
+				pcb->name[MAXNAME-1]='\0';
+				pcb->lifeTime=lifeTime;
+				pcb->runningTime=runTime;
+				
+				//If the process was not added to the queue
+				if(List_add_tail( SYSSTATES.New, (void *) pcb ) == 0)
+					printf("Error in adding the process into the queue.\n");
+			}
+			else
+				printf("System out of memory.\n");
+
+		}
+		else
+			printf("Incorrect order of inputs!\n");
+}
+
+//If time's up, remove it from running state
+int removeRunning(){
 	int all_ok=1;
-	//If time's up, remove it from running state
 	if(List_size(SYSSTATES.Running) != 0 && (runStateClock == 0 || *runningProcessLifetime == 0)){
 		PCB *p=NULL;
 		if(List_head_info(SYSSTATES.Running, (void *) &p) == 1){
@@ -64,8 +173,13 @@ int alarm_helper(){
 			all_ok=0;
 		}	
 	}
-	
-	//Move all processes in the new queue to the ready queue
+	return all_ok;
+}
+
+//Move all processes in the new queue to the ready queue
+int moveNewToReady(){
+	int all_ok=1;
+
 	if(List_size(SYSSTATES.New) != 0){
 		List_node_t *curr=(SYSSTATES.New)->head;
 		while(curr != NULL){
@@ -83,6 +197,7 @@ int alarm_helper(){
 					runningProcessLifetime=&(p->lifeTime);
 				}
 				else{
+					all_ok=0;
 					printf("Error retrieving data. Program will terminate in 3 seconds.\n");
 					sleep(3);
 					exit(EXIT_FAILURE);
@@ -90,7 +205,75 @@ int alarm_helper(){
 
 			}
 		}
-		//printf("size of new %d; size of ready %d\n", List_size(SYSSTATES.New), List_size(SYSSTATES.Ready));
+	}
+	return all_ok;
+
+}
+
+//move pcbs to the targeted queues
+int alarm_helper(){
+	int all_ok=1;
+	
+	//Remove from running state if time's up	
+	if(removeRunning() != 1)
+		all_ok=0;
+	
+	//Move all newly created processes to ready queue
+	if(moveNewToReady() != 1)
+		all_ok=0;
+
+	return all_ok;
+}
+
+//If CPU has processed enough time for a process, move it to the blocked queue
+int moveToBlocked(){
+	int all_ok=1;
+	if(List_size(SYSSTATES.Ready) != 0){
+		PCB *p=NULL;
+		if(List_head_info(SYSSTATES.Ready, (void *) &p)){
+				
+			//Update clocks
+			runStateClock=p->runningTime;
+			runningProcessLifetime=&(p->lifeTime);
+			//The process that has finished running is not removed from the running queue
+			//but it will be in alaim_helper function
+			movePCB(SYSSTATES.Ready, SYSSTATES.Running);
+		}
+		else{
+			all_ok=0;
+			printf("Error retrieving data. Program will terminate in 3 seconds.\n");
+			sleep(3);
+			exit(EXIT_FAILURE);
+		}
+	}
+	return all_ok;
+
+}
+
+//Move a process from blocked to ready
+int moveBlockedToReady(){
+	int all_ok=1;
+
+	if(List_size(SYSSTATES.Blocked) != 0){
+		movePCB(SYSSTATES.Blocked, SYSSTATES.Ready);
+		
+		//If there is no process in the running state, move one from ready state
+		if(List_size(SYSSTATES.Running) == 0){
+			movePCB(SYSSTATES.Ready, SYSSTATES.Running);
+			PCB *p=NULL;
+			if(List_head_info(SYSSTATES.Running, (void *) &p)){
+					
+				//Update clocks
+				runStateClock=p->runningTime;
+			runningProcessLifetime=&(p->lifeTime);
+			}
+			else{
+				all_ok=0;
+				printf("Error retrieving data. Program will terminate in 3 seconds.\n");
+				sleep(3);
+				exit(EXIT_FAILURE);
+			}
+		}
 	}
 
 	return all_ok;
@@ -106,53 +289,21 @@ void alarm_bells(int singal){
 		runStateClock--;
 		(*runningProcessLifetime)--;
 	}
-	else{ //If CPU has processed enough time for a process, move it to the blocked queue
-		if(List_size(SYSSTATES.Ready) != 0){
-			PCB *p=NULL;
-			if(List_head_info(SYSSTATES.Ready, (void *) &p)){
-
-				//Update clocks
-				runStateClock=p->runningTime;
-				runningProcessLifetime=&(p->lifeTime);
-				//The process that has finished running is not removed from the running queue
-				//but it will be in alaim_helper function
-				movePCB(SYSSTATES.Ready, SYSSTATES.Running);
-			}
-			else{
-				printf("Error retrieving data. Program will terminate in 3 seconds.\n");
-				sleep(3);
-				exit(EXIT_FAILURE);
-			}
-		}
-	}
+	else //If CPU has processed enough time for a process, move it to the blocked queue
+		moveToBlocked();
 
 	//decrement clock for blocked queue
 	if(blockedClock != 0 && List_size(SYSSTATES.Blocked) != 0)
 		blockedClock--;
-	else if(blockedClock == 0){ //If a process has stay at the head of the blocked queue for 5 time unit, move it to the ready queue
-		if(List_size(SYSSTATES.Blocked) != 0){
-			movePCB(SYSSTATES.Blocked, SYSSTATES.Ready);
-
-			//If there is no process in the running state, move one from ready state
-			if(List_size(SYSSTATES.Running) == 0){
-				movePCB(SYSSTATES.Ready, SYSSTATES.Running);
-				PCB *p=NULL;
-				if(List_head_info(SYSSTATES.Running, (void *) &p)){
-
-					//Update clocks
-					runStateClock=p->runningTime;
-					runningProcessLifetime=&(p->lifeTime);
-				}
-				else{
-					printf("Error retrieving data. Program will terminate in 3 seconds.\n");
-					sleep(3);
-					exit(EXIT_FAILURE);
-				}
-			}
-		}
-
+	else if(blockedClock == 0){ 
+		//If a process has stay at the head of the blocked queue for 5 time unit, move it to the ready queue
+		moveBlockedToReady();
+		
 		//Reset block clock
-		blockedClock=5;
+		blockedClock=4;
+
+		//count this alarm in also
+		blockedClock--;
 	}
 	else
 		blockedClock=5;
@@ -285,112 +436,6 @@ void installHandlerCol(int *return_code){
 	}
 }
 
-//Main function
-int main(int argc, char **argv){
-	int return_code=0; //determine the exiting code
-	char line[MAXLEN]; //stores the input from stdin
-	char name[MAXLEN]; //stores the name of the input process
-	int lifeTime, runTime; //stores the lifetime and runing state time of the input process
-	
-	
-
-	//For checking install status
-	int alrmSuc=1, urs1Suc=1, hupSuc=1, breakSuc=1;
-
-	//Install the handlers
-	installHandlerInd(&alrmSuc, &urs1Suc, &hupSuc, &breakSuc);
-
-	//If all installation fail, exit the program with error code -1
-	if(alrmSuc == -1 && urs1Suc == -1 && hupSuc == -1 && breakSuc == -1){
-		printf("All installatioin failed! Program will exit in 3 seconds.\n");
-		sleep(3);
-		exit(EXIT_FAILURE);
-	}
-
-	if(alrmSuc == 1 && urs1Suc == 1 && hupSuc == 1 && breakSuc == 1)
-		printf("All interrupt handlers are installed successfully, the program is good to go.\n");
-
-	//update TIMER
-	readConfig();
-
-
-
-	//Initialize system states queues
-	List_t newQ, readyQ, runQ, blockedQ, exitQ;
-	int newCheck=List_init(&newQ, "new");
-	int runCheck=List_init(&runQ, "running");
-	int readyCheck=List_init(&readyQ, "ready");
-	int blockedCheck=List_init(&blockedQ, "blocked");
-	int exitCheck=List_init(&exitQ, "exit");
-	
-	//Check if all queues are initialized successfully
-	if(!(newCheck && runCheck && readyCheck && blockedCheck && exitCheck)){
-		printf("Fail to initilize the state queues, program will terminate in 3 seconds.\n");
-		sleep(3);
-		exit(EXIT_FAILURE);
-	}
-
-	//Let them point to the newly initialized queues
-	SYSSTATES.New=&newQ;
-	SYSSTATES.Ready=&readyQ;
-	SYSSTATES.Running=&runQ;
-	SYSSTATES.Blocked=&blockedQ;
-	SYSSTATES.Exit=&exitQ;
-	
-
-
-	//Set the alarm interrupt going
-	if(TIMER > 0)
-		alarm(TIMER);
-	else
-		printf("No timer is set or the timer is set to 0.\n");
-
-	//Listen to the keyboard inputs and update the queues
-	//The idea of most of the codes in the while loop are from parse.c written by Michael McAllister
-	while(1){
-		PCB *pcb; //a pointer points to a PCB object, used to store the process read from stdin
-		//Get line from keyboard with max string length
-		fgets(line, MAXLEN-1, stdin);
-		
-		//Check if the input is read and is of the correct format
-		if(line == NULL){
-			printf("No input is read from keyboard or the input format is incorrect, please try it again.\n");
-			continue;
-		}
-
-		if(sscanf(line, "%s %d %d", name, &lifeTime, &runTime) == 3){
-			//printf("Process name: %s; Life time: %d; Run state time: %d\n", name, lifeTime, runTime);
-			//If the input is incorrect, promote user to input again
-			while((lifeTime <= 0 || runTime <= 0)){
-				if(lifeTime < 0)
-					printf("Process %s\'s lifetime cannot be less than 0!\n", name);
-				else if(runTime <= 0)
-					printf("Process %s\'s run time cannot be less than or equal to 0!\n", name);
-				printf("Please try again with this format: <processname> <lifetime> <run time>\n");
-				sscanf(line, "%s %d %d", name, &lifeTime, &runTime);
-			}
-			pcb=(PCB *) malloc(sizeof(PCB));
-			if(pcb != NULL){
-				strncpy(pcb->name, name, MAXNAME-1);
-				//Terminates the string
-				pcb->name[MAXNAME-1]='\0';
-				pcb->lifeTime=lifeTime;
-				pcb->runningTime=runTime;
-				
-				//If the process was not added to the queue
-				if(List_add_tail( SYSSTATES.New, (void *) pcb ) == 0)
-					printf("Error in adding the process into the queue.\n");
-			}
-			else
-				printf("System out of memory.\n");
-
-		}
-		else
-			printf("Incorrect order of inputs!\n");
-	}
-
-	return return_code;
-}
 
 //Read inputs from keyboard
 int read_line(char line[], int len) {

@@ -36,7 +36,8 @@ not be hard to understand my program.
 References:
 --------
 list.c, list.h and list.txt are written by Professor Michael McAllister, I did
-make some changes to them (List_size() function, and added some attributes to
+make some changes to them (List_size() function, I was usingit for debuging,
+so I di not implement isEmpty() function, and I also added some attributes to
 some of the data structures), but not much. I thank Professor Michael
 McAllister for letting us use his codes. Some of the dieas in my program came
 from parse.c and other codes provided by Michael McAllister.

@@ -21,10 +21,15 @@ typedef struct {
 	int runningTime;
 } PCB;
 
+void read_stdin();
+int removeRunning();
+int moveNewToReady();
+int moveToBlocked();
+int moveBlockedToReady();
 int alarm_helper();
 void alarm_bells(int signal);
 void printSysState();
-void reConfig();
+void readConfig();
 void exitAll();
 void installHandlerInd(int *alrmSuc, int *urs1Suc, int *hupSuc, int *breakSuc);
 void installHandlerCol(int *return_code);
