@@ -1,5 +1,9 @@
 Q1:
-	One difficulty is that when doing something like access control, file management, and password, etc. since even OS cannot modify itself, those things will have to be stored in somewhere in memory that is unprotected and can be accessed by unauthorized users. In Microkernel architecture, for example, since this kind of OS only the core functionality is run in kernel mode and all others including file system is run as separate user space and only change into kernel mode when necessary, so this type of OS is less affected than other type of architectures. If the architecture of the system is simple architecture, since the entire OS is run in Kernel mode, that means nearly nothing is protected if no one is allowed to modify the OS.
+	The key to solve this question is that once no one is allowed to modify the OS, then any process that requires communication with the OS (read/write files, etc.) is no longer implementable. And if one wants to implement them, they have to put those functions outside the kernel.
+	
+	One difficulty is that when doing something like system calls. access control, and password, etc. since even OS cannot modify itself, those things will have to be stored in somewhere in memory that is unprotected and can be accessed by unauthorized users. 
+
+	In Microkernel architecture, for example, since this kind of OS only the core functionality is run in kernel mode and all others including file system is run as separate user space and only change into kernel mode when necessary, so this type of OS is less affected than other type of architectures. If the architecture of the system is simple architecture, since the entire OS is run in Kernel mode, that means nearly nothing is protected if no one is allowed to modify the OS.
 
 	Another one is when trigger an interrupt, since we cannot modify the OS, that means the triggered interrupt cannot be run in Kernel mode, and thus anyone can modify interrupt and the OS may no longer be in control.
 
