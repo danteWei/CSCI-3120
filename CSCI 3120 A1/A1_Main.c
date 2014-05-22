@@ -448,20 +448,6 @@ void installHandlerCol(int *return_code){
 	}
 }
 
-
-//Read inputs from keyboard
-int read_line(char line[], int len) {
-  int ch, i = 0;
-
-  while ((ch = getchar()) != '\n') 
-    if (i < len) 
-      line[i++] = ch;
-  
-  line[i] = '\0';
-
-  return i;
-}
-
 //Move a pcb from one queue to another
 int movePCB(List_t *fromL, List_t *toL){
 	int all_ok=0;
