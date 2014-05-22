@@ -271,7 +271,7 @@ void updateTimeInState(List_t *list){
 //function for alarm interrupt
 void alarm_bells(int singal){
 	/*Start alarm*/
-	printf("alarm start\n");
+	//printf("alarm start\n");
 
 	
 	//decrement clocks
