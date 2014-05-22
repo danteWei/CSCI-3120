@@ -13,13 +13,18 @@ moved to ready queue when the alarm interrupt is triggered!**
 
 USAGE:
 --------
+**This program is designed to run only on UNIX based system!** It may be ok to run the program on a LINUX based system, but I never test it.
+
 When first time use it, compile it first using `make` command to make sure the
 executable is up to date, then invoke the program using `./A1Exec` command.
 
 I set the alarm interrupt to print "alarm start" every time it interrupts the
 prgroam, so that we know it is interrupted. If you need to trigger any other
 interrupt except SIGINT, use the following command `kill -s <signal name> pid`
-to invoke it.
+to invoke it. If you want to find the process ID, use the following command: 
+`ps ax | grep <program name>`. For example, I use `./A1Exec` to invoke my program, 
+then if I want to find the pid for my program, I'll type in `ps ax | grep ./A1Exec` 
+**on another console window**.
 
 Return Codes:
 --------
