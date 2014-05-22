@@ -39,5 +39,6 @@ void printPCBTransition(PCB *pcb, List_t *fromL, List_t *toL);
 int movePCB(List_t *fromL, List_t *toL);
 void printPCB(PCB *p);
 void printState(List_t *list);
+void updateTimeInState(List_t *list);
 
 #endif

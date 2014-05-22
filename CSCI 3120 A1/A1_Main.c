@@ -153,10 +153,8 @@ int removeRunning(){
 				movePCB(SYSSTATES.Running, SYSSTATES.Exit);
 			
 			//Else, move it to blocked state
-			else{
+			else
 				movePCB(SYSSTATES.Running, SYSSTATES.Blocked);
-				blockedClock=5;
-			}
 			p=NULL;
 
 			
@@ -215,6 +213,7 @@ int moveToBlocked(){
 			//Update clocks
 			runStateClock=p->runningTime;
 			runningProcessLifetime=&(p->lifeTime);
+			movePCB(SYSSTATES.Ready, SYSSTATES.Running);
 		}
 		else{
 			all_ok=0;
@@ -275,7 +274,6 @@ void alarm_bells(int singal){
 	printf("alarm start\n");
 
 	
-
 	//decrement clocks
 	if(runStateClock != 0 && *runningProcessLifetime != 0){
 		runStateClock--;
@@ -283,7 +281,9 @@ void alarm_bells(int singal){
 		//Update times in states
 		updateTimeInState(SYSSTATES.Ready);
 		updateTimeInState(SYSSTATES.Running);
-		updateTimeInState(SYSSTATES.Blocked);
+		
+
+		
 	}
 	
 	else //If CPU has processed enough time for a process, move it to the blocked queue
@@ -294,10 +294,9 @@ void alarm_bells(int singal){
 	//decrement clock for blocked queue
 	if(blockedClock != 0 && List_size(SYSSTATES.Blocked) != 0){
 		blockedClock--;
-		//Update times in states
-		updateTimeInState(SYSSTATES.Ready);
-		updateTimeInState(SYSSTATES.Running);
+		//update time in blocked state
 		updateTimeInState(SYSSTATES.Blocked);
+		printf("blocked clock: %d\n", blockedClock);
 	}
 	else if(blockedClock == 0){ 
 		//If a process has stay at the head of the blocked queue for 5 time unit, move it to the ready queue
@@ -307,7 +306,7 @@ void alarm_bells(int singal){
 		blockedClock=5;
 
 	
-
+	
 
 	//call the helper function
 	if(moveNewToReady() != 1){
