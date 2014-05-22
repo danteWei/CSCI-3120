@@ -4,6 +4,11 @@ Textbook/
 .DS_Store
 */**/*.swp
 */**/*.dSYM
+*/**/*.pdf
+*/**/*.doc
+*/**/*.docx
 *.pdf
 *.doc
 *.docx
+Assignments/
+*/**/Assignment*.txt
