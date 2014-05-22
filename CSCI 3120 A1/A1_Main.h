@@ -19,6 +19,7 @@ typedef struct {
 	char name[MAXNAME];
 	int lifeTime;	
 	int runningTime;
+	int timeInState;
 } PCB;
 
 void read_stdin();

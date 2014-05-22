@@ -6,25 +6,25 @@ The time unit is set to: 5 second(s).
 a 3 5
 b 4 2
 alarm start
-a transition from new to ready
-a transition from ready to running
-b transition from new to ready
+a transition from new(0) to ready
+a transition from ready(0) to running
+b transition from new(0) to ready
 alarm start
 alarm start
 alarm start
-a transition from running to exit
-b transition from ready to running
+a transition from running(3) to exit
+b transition from ready(3) to running
 alarm start
 alarm start
-b transition from running to blocked
-alarm start
-alarm start
-alarm start
+b transition from running(2) to blocked
 alarm start
 alarm start
 alarm start
-b transition from blocked to ready
-b transition from ready to running
+alarm start
+alarm start
+alarm start
+b transition from blocked(5) to ready
+b transition from ready(0) to running
 new: 
 	Empty
 ready: 
@@ -37,7 +37,7 @@ exit:
 	a 0
 alarm start
 alarm start
-b transition from running to exit
+b transition from running(2) to exit
 alarm start
 alarm start
 new: 
@@ -63,18 +63,18 @@ All interrupt handlers are installed successfully, the program is good to go.
 The time unit is set to: 5 second(s).
 a 1 3
 b 4 2
-c alarm start
-a transition from new to ready
-a transition from ready to running
-b transition from new to ready
-5 3
 alarm start
-a transition from running to exit
-b transition from ready to running
-c transition from new to ready
+c 5 3
+a transition from new(0) to ready
+a transition from ready(0) to running
+b transition from new(0) to ready
+alarm start
+a transition from running(1) to exit
+b transition from ready(1) to running
+c transition from new(0) to ready
 alarm start
 alarm start
-b transition from running to blocked
+b transition from running(2) to blocked
 new: 
 	Empty
 ready: 
@@ -86,21 +86,21 @@ blocked:
 exit: 
 	a 0
 alarm start
-c transition from ready to running
+c transition from ready(2) to running
 alarm start
 alarm start
 alarm start
-c transition from running to blocked
+c transition from running(3) to blocked
 alarm start
 alarm start
-b transition from blocked to ready
-b transition from ready to running
+b transition from blocked(5) to ready
+b transition from ready(0) to running
 alarm start
 e 6 3
 alarm start
-b transition from running to exit
-e transition from new to ready
-e transition from ready to running
+b transition from running(2) to exit
+e transition from new(0) to ready
+e transition from ready(0) to running
 alarm start
 new: 
 	Empty
@@ -115,10 +115,10 @@ exit:
 	b 0
 alarm start
 alarm start
-e transition from running to blocked
+e transition from running(3) to blocked
 alarm start
-c transition from blocked to ready
-c transition from ready to running
+c transition from blocked(9) to ready
+c transition from ready to(0) running
 new: 
 	Empty
 ready: 
@@ -132,13 +132,13 @@ exit:
 	b 0
 alarm start
 alarm start
-c transition from running to exit
+c transition from running(2) to exit
 alarm start
 alarm start
 alarm start
 alarm start
-e transition from blocked to ready
-e transition from ready to running
+e transition from blocked(5) to ready
+e transition from ready(0) to running
 alarm start
 new: 
 	Empty
@@ -154,7 +154,7 @@ exit:
 	c 0
 alarm start
 alarm start
-e transition from running to exit
+e transition from running(3) to exit
 new: 
 	Empty
 ready: 
@@ -180,36 +180,36 @@ All interrupt handlers are installed successfully, the program is good to go.
 The time unit is set to: 5 second(s).
 a 4 1
 alarm start
-a transition from new to ready
-a transition from ready to running
+a transition from new(0) to ready
+a transition from ready(0) to running
 alarm start
-a transition from running to blocked
+a transition from running(1) to blocked
 alarm start
 b 5 2
 alarm start
-b transition from new to ready
-b transition from ready to running
+b transition from new(0) to ready
+b transition from ready(0) to running
 alarm start
 alarm start
-b transition from running to blocked
+b transition from running(2) to blocked
 
 The time unit is set to: 1 second(s).
 alarm start
 alarm start
-a transition from blocked to ready
-a transition from ready to running
+a transition from blocked(5) to ready
+a transition from ready(0) to running
 alarm start
-a transition from running to blocked
-alarm start
-alarm start
+a transition from running(1) to blocked
 alarm start
 alarm start
 alarm start
-b transition from blocked to ready
-b transition from ready to running
 alarm start
 alarm start
-b transition from running to blocked
+b transition from blocked(7) to ready
+b transition from ready(0) to running
+alarm start
+alarm start
+b transition from running(2) to blocked
 alarm start
 new: 
 	Empty
@@ -225,19 +225,19 @@ exit:
 alarm start
 alarm start
 alarm start
-a transition from blocked to ready
-a transition from ready to running
+a transition from blocked(5) to ready
+a transition from ready(0) to running
 alarm start
-a transition from running to blocked
-alarm start
-alarm start
+a transition from running(1) to blocked
 alarm start
 alarm start
 alarm start
-b transition from blocked to ready
-b transition from ready to running
 alarm start
-b transition from running to exit
+alarm start
+b transition from blocked(5) to ready
+b transition from ready(0) to running
+alarm start
+b transition from running(1) to exit
 alarm start
 alarm start
 new: 
@@ -270,27 +270,27 @@ The time unit is set to: 5 second(s).
 a 3 5
 b 4 2
 alarm start
-a transition from new to ready
-a transition from ready to running
-b transition from new to ready
+a transition from new(0) to ready
+a transition from ready(0) to running
+b transition from new(0) to ready
 alarm start
 alarm start
 alarm start
-a transition from running to exit
-b transition from ready to running
+a transition from running(3) to exit
+b transition from ready(3) to running
 alarm start
 alarm start
-b transition from running to blocked
+b transition from running(2) to blocked
 alarm start
 alarm start
 alarm start
 alarm start
 alarm start
-b transition from blocked to ready
-b transition from ready to running
+b transition from blocked(5) to ready
+b transition from ready(0) to running
 alarm start
 alarm start
-b transition from running to exit
+b transition from running(2) to exit
 alarm start
 alarm start
 alarm start

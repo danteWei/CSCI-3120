@@ -128,6 +128,7 @@ void read_stdin(){
 				pcb->name[MAXNAME-1]='\0';
 				pcb->lifeTime=lifeTime;
 				pcb->runningTime=runTime;
+				pcb->timeInState=0;
 				
 				//If the process was not added to the queue
 				if(List_add_tail( SYSSTATES.New, (void *) pcb ) == 0)
@@ -148,22 +149,14 @@ int removeRunning(){
 		PCB *p=NULL;
 		if(List_head_info(SYSSTATES.Running, (void *) &p) == 1){
 			//If lifetime is 0, move it to exit state
-			if((*p).lifeTime == 0){
+			if((*p).lifeTime == 0)
 				movePCB(SYSSTATES.Running, SYSSTATES.Exit);
-				
-				//If the ready queue is not empty, move one process to the running queue
-				if(List_size(SYSSTATES.Ready) != 0){
-					movePCB(SYSSTATES.Ready, SYSSTATES.Running);
-					if(List_head_info(SYSSTATES.Running, (void *)&p)){
-						//Update clocks
-						runStateClock=p->runningTime;
-						runningProcessLifetime=&(p->lifeTime);
-					}
-				}
-			}
+			
 			//Else, move it to blocked state
-			else
+			else{
 				movePCB(SYSSTATES.Running, SYSSTATES.Blocked);
+				blockedClock=5;
+			}
 			p=NULL;
 
 			
@@ -210,24 +203,11 @@ int moveNewToReady(){
 
 }
 
-//move pcbs to the targeted queues
-int alarm_helper(){
-	int all_ok=1;
-	
-	//Remove from running state if time's up	
-	if(removeRunning() != 1)
-		all_ok=0;
-	
-	//Move all newly created processes to ready queue
-	if(moveNewToReady() != 1)
-		all_ok=0;
-
-	return all_ok;
-}
-
-//If CPU has processed enough time for a process, move it to the blocked queue
+//If CPU has processed enough time for a process, move it to the blocked queue, or exit queue
 int moveToBlocked(){
 	int all_ok=1;
+	//Remove from running state if time's up
+	removeRunning();
 	if(List_size(SYSSTATES.Ready) != 0){
 		PCB *p=NULL;
 		if(List_head_info(SYSSTATES.Ready, (void *) &p)){
@@ -235,9 +215,6 @@ int moveToBlocked(){
 			//Update clocks
 			runStateClock=p->runningTime;
 			runningProcessLifetime=&(p->lifeTime);
-			//The process that has finished running is not removed from the running queue
-			//but it will be in alaim_helper function
-			movePCB(SYSSTATES.Ready, SYSSTATES.Running);
 		}
 		else{
 			all_ok=0;
@@ -256,7 +233,7 @@ int moveBlockedToReady(){
 
 	if(List_size(SYSSTATES.Blocked) != 0){
 		movePCB(SYSSTATES.Blocked, SYSSTATES.Ready);
-		
+		blockedClock=5;
 		//If there is no process in the running state, move one from ready state
 		if(List_size(SYSSTATES.Running) == 0){
 			movePCB(SYSSTATES.Ready, SYSSTATES.Running);
@@ -265,7 +242,7 @@ int moveBlockedToReady(){
 					
 				//Update clocks
 				runStateClock=p->runningTime;
-			runningProcessLifetime=&(p->lifeTime);
+				runningProcessLifetime=&(p->lifeTime);
 			}
 			else{
 				all_ok=0;
@@ -278,51 +255,77 @@ int moveBlockedToReady(){
 
 	return all_ok;
 }
+//update time in state
+void updateTimeInState(List_t *list){
+	PCB *p=NULL;
+	PCB *context=NULL;
+	if(List_size(list) != 0){
+		List_next_node(list, (void *)&context, (void *)&p);
+		while(p != NULL){
+				p->timeInState+=1;
+				List_next_node(list, (void *)&context, (void *)&p);
+		}
+	}
+}
+
 
 //function for alarm interrupt
 void alarm_bells(int singal){
 	/*Start alarm*/
 	printf("alarm start\n");
+
 	
+
 	//decrement clocks
 	if(runStateClock != 0 && *runningProcessLifetime != 0){
 		runStateClock--;
 		(*runningProcessLifetime)--;
+		//Update times in states
+		updateTimeInState(SYSSTATES.Ready);
+		updateTimeInState(SYSSTATES.Running);
+		updateTimeInState(SYSSTATES.Blocked);
 	}
+	
 	else //If CPU has processed enough time for a process, move it to the blocked queue
 		moveToBlocked();
 
+	
+
 	//decrement clock for blocked queue
-	if(blockedClock != 0 && List_size(SYSSTATES.Blocked) != 0)
+	if(blockedClock != 0 && List_size(SYSSTATES.Blocked) != 0){
 		blockedClock--;
+		//Update times in states
+		updateTimeInState(SYSSTATES.Ready);
+		updateTimeInState(SYSSTATES.Running);
+		updateTimeInState(SYSSTATES.Blocked);
+	}
 	else if(blockedClock == 0){ 
 		//If a process has stay at the head of the blocked queue for 5 time unit, move it to the ready queue
 		moveBlockedToReady();
-		
-		//Reset block clock
-		blockedClock=4;
-
-		//count this alarm in also
-		blockedClock--;
 	}
 	else
 		blockedClock=5;
 
+	
+
+
 	//call the helper function
-	if(alarm_helper() == 0){
+	if(moveNewToReady() != 1){
 		printf("Program will terminate in 3 seconds.\n");
 		sleep(3);
 		exit(EXIT_FAILURE);
 	}
 
-	alarm(TIMER);
+		alarm(TIMER);
 }
 
 //helper function for printSysState
 void printState(List_t *list){
 	PCB *context=NULL, *curr=NULL;
 	char *lName=list->name;
+
 	printf("%s: \n", lName);
+
 	if(List_size(list) == 0)
 		printf("\tEmpty\n");
 	else{
@@ -469,6 +472,7 @@ int movePCB(List_t *fromL, List_t *toL){
 	if(removeOK == 1 && addOK == 1){
 		all_ok=1;
 		printPCBTransition(temp, fromL, toL);
+		temp->timeInState=0;
 	}
 	return all_ok;
 
@@ -476,7 +480,7 @@ int movePCB(List_t *fromL, List_t *toL){
 
 //Print the information of a process that has been moved from one state to another
 void printPCBTransition(PCB *pcb, List_t *fromL, List_t *toL){
-	printf("%s transition from %s to %s\n", pcb->name, fromL->name, toL->name);
+	printf("%s transition from %s(%d) to %s\n", pcb->name,fromL->name,  pcb->timeInState, toL->name);
 }
 
 void printPCB(PCB *p){
