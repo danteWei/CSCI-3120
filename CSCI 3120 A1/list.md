@@ -70,3 +70,5 @@ void *mydata;
 while ( List_next_node( &the_list, &context, &mydata ) && (mydata != NULL)) {
   /* Do something with the data pointed to by mydata. */
 }
+
+Michael McAllister
