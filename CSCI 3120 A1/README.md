@@ -26,6 +26,11 @@ to invoke it. If you want to find the process ID, use the following command:
 then if I want to find the pid for my program, I'll type in `ps ax | grep ./A1Exec` 
 **on another console window**.
 
+If you worry that the data will be lost when the alarm interrupt interrupts the program while you
+are typing in a process, don't worry about it. all what you typed will still
+be read into the program even when an alarm interrupt is triggered in the
+process.
+
 Return Codes:
 --------
 There are some functions that return integers as their return codes, if the
