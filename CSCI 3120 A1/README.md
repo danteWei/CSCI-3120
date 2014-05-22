@@ -4,7 +4,7 @@ The main file "A1_Main.c" implements the tasks listed on the assignment 1.
 I could take PCB structure out and make it a separate class, but I didn't
 because I think it is unnecessary. [This is the link that explains how list work](list.md).
 ***
-The program will run on its own until it received a <code>Ctrl+C</code> command from
+The program will run on its own until it received a `Ctrl+C` command from
 keyboard. Once it received the command, it will deallocate all memories it
 created and then quit in 3 seconds.
 
@@ -13,12 +13,12 @@ moved to ready queue when the alarm interrupt is triggered!**
 
 USAGE:
 --------
-When first time use it, compile it first using <code>make</code> command to make sure the
-executable is up to date, then invoke the program using <code>./A1Exec</code> command.
+When first time use it, compile it first using `make` command to make sure the
+executable is up to date, then invoke the program using `./A1Exec` command.
 
 I set the alarm interrupt to print "alarm start" every time it interrupts the
 prgroam, so that we know it is interrupted. If you need to trigger any other
-interrupt except SIGINT, use the following command <code>kill -s \<signal name\> pid</code>
+interrupt except SIGINT, use the following command `kill -s <signal name> pid`
 to invoke it.
 
 Return Codes:
@@ -36,8 +36,8 @@ not be hard to understand my program.
 References:
 --------
 list.c, list.h and list.txt are written by Professor Michael McAllister, I did
-make some changes to them (List_size() function, I was using it for debugging,
-so I did not implement isEmpty() function, and I also added some attributes to
+make some changes to them (`List_size()` function, I was using it for debugging,
+so I did not implement `isEmpty()` function, and I also added some attributes to
 some of the data structures), but not much. I thank Professor Michael
 McAllister for letting us use his codes. Some of the dieas in my program came
 from parse.c and other codes provided by Michael McAllister.
