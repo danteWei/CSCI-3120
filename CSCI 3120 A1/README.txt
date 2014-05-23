@@ -13,7 +13,7 @@ moved to ready queue when the alarm interrupt is triggered!**
 
 USAGE:
 --------
-**This program is designed to run only on UNIX based system!** It may be ok to run the program on a LINUX based system, but I never test it.
+**This program is designed to run only on UNIX based system!** It may be ok to run the program on a LINUX based system, but I never tested it.
 
 When first time use it, compile it first using "make" command to make sure the
 executable is up to date, then invoke the program using "./A1Exec" command.
