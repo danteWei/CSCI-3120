@@ -32,6 +32,36 @@ are typing in a process, don't worry about it. all what you typed will still
 be read into the program even when an alarm interrupt is triggered in the
 process.
 
+A sample usage would be:
+    
+    $ ./A1Exec
+    
+    a 5 2
+    b 3 5
+    c 3 4
+    
+    //Program will print process transition imformation every X seconds
+    //And other information if HUP or USR1 interrupt is triggered
+    
+    ^C
+    All memory space are freed, program will terminate in 3 seconds
+    $ 
+
+On another console:
+    
+    //Get the pid of A1Exec
+    $ ps ax | grep ./A1Exec
+    //A1Exec porcess ID will be presented here, let's say the pid is 1234
+    
+    //Trigger HUP interrupt
+    $ kill -s HUP 1234
+    
+    //Trigger USR1 interrupt
+    $ kill -s USR1 1234
+    
+    //If you want to kill the process forcibly
+    $ kill -KILL 1234
+
 Return Codes:
 --------
 There are some functions that return integers as their return codes, if the
