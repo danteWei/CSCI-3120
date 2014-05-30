@@ -36,7 +36,7 @@ was successful.  A value of 0 represents False and any non-zero
 value represents True or success.
 
 When a list.c function is to return data to the caller, such as
-with List_remove_head, the data is returned as a pass-by-reference
+with `List_remove_head`, the data is returned as a pass-by-reference
 parameter to the function.
 
 When no data is available to be returned, such as navigating to the
@@ -69,10 +69,10 @@ NULL value.  Sample iteration code is:
 
 /* Assume that the_list has been inialized and data has been added to it. */
 
-<code>while ( List_next_node( &the_list, &context, &mydata ) && (mydata != NULL)) {
+`while ( List_next_node( &the_list, &context, &mydata ) && (mydata != NULL)) {`
 
   /* Do something with the data pointed to by mydata. */
-  
-}</code>
+
+`}`
 
 Michael McAllister
