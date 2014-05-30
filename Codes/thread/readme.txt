@@ -7,3 +7,10 @@ threaded_list2 -- remember last found end and insert from there
 threaded_list3 -- keep global tail pointer
 threaded_list4 -- like 2, but follow to end of list from that point
 
+Other programs:
+
+thread1 -- creates two threads to print numbers independently
+thread2 -- same as thread1 but we try to pass more than one value to each
+thread using a struct...program has a problem
+thread3 -- same as thread2 but with the problem fixed
+

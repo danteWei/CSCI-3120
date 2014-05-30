@@ -30,8 +30,8 @@ main( int argc, char **argv )
 
   /* Create the lightweight processes */
 
-  pthread_create( &proc1, &attrib, count_up, (void *)2000 );
-  pthread_create( &proc2, &attrib, count_up, (void *)1000 );
+  pthread_create( &proc1, &attrib, count_up, (void *)20 );
+  pthread_create( &proc2, &attrib, count_up, (void *)10 );
 
   /* Wait for both lightweight processes to end. */
 
