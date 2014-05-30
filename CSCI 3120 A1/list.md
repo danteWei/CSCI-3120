@@ -61,18 +61,14 @@ changes the context variable while `List_remove_in_context` and
 To iterate through the linked list, begin with the context as a
 NULL value.  Sample iteration code is:
 
-`List_t the_list;`
+    List_t the_list;
+    void *context = NULL;
+    void *mydata;
 
-`void *context = NULL;`
+    /* Assume that the_list has been inialized and data has been added to it. */
 
-`void *mydata;`
-
-/* Assume that the_list has been inialized and data has been added to it. */
-
-`while ( List_next_node( &the_list, &context, &mydata ) && (mydata != NULL)) {`
-
-  /* Do something with the data pointed to by mydata. */
-
-`}`
+    while ( List_next_node( &the_list, &context, &mydata ) && (mydata != NULL)) {
+      /* Do something with the data pointed to by mydata. */
+    }
 
 Michael McAllister
