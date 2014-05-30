@@ -23,7 +23,7 @@ Usage
 -----
 
 The list is initialized with the List_init function and is destroyed
-with the list_destroy function.  List_destroy releases the list
+with the `list_destroy` function.  `List_destroy` releases the list
 nodes and memory that the list.c code allocates.  It does _not_
 release the user memory that is pointed to by the pointers supplied
 to the functions to store data.
@@ -48,27 +48,31 @@ Accessing the inside of the list
 --------------------------------
 
 Three functions give you access to the internals of the linked list:
-- List_next_node -- for iterating over the list
-- List_remove_in_context -- to remove a node found using List_next_node
-- List_add_after -- to insert an item into the middle of the linked list 
-  where the position was found using List_next_node
+- `List_next_node` -- for iterating over the list
+- `List_remove_in_context` -- to remove a node found using List_next_node
+- `List_add_after` -- to insert an item into the middle of the linked list 
+  where the position was found using `List_next_node`
 
 All three functions use a "context" parameter to let the list.c
-functions remember where they are within the linked list.  List_next_node
-changes the context variable while List_remove_in_context and
-List_add_after just use the context.
+functions remember where they are within the linked list.  `List_next_node`
+changes the context variable while `List_remove_in_context` and
+`List_add_after` just use the context.
 
 To iterate through the linked list, begin with the context as a
 NULL value.  Sample iteration code is:
 
-List_t the_list;
-void *context = NULL;
-void *mydata;
+`List_t the_list;`
 
-/* Assume that the_list has been inialized and data has been added to it. */
+`void *context = NULL;`
 
-while ( List_next_node( &the_list, &context, &mydata ) && (mydata != NULL)) {
-  /* Do something with the data pointed to by mydata. */
-}
+`void *mydata;`
+
+`/* Assume that the_list has been inialized and data has been added to it. */`
+
+`while ( List_next_node( &the_list, &context, &mydata ) && (mydata != NULL)) {`
+
+`  /* Do something with the data pointed to by mydata. */`
+
+`}`
 
 Michael McAllister
