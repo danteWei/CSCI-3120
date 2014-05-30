@@ -67,12 +67,12 @@ NULL value.  Sample iteration code is:
 
 `void *mydata;`
 
-`/* Assume that the_list has been inialized and data has been added to it. */`
+/* Assume that the_list has been inialized and data has been added to it. */
 
-`while ( List_next_node( &the_list, &context, &mydata ) && (mydata != NULL)) {`
+<code>while ( List_next_node( &the_list, &context, &mydata ) && (mydata != NULL)) {
 
-`  /* Do something with the data pointed to by mydata. */`
-
-`}`
+  /* Do something with the data pointed to by mydata. */
+  
+}</code>
 
 Michael McAllister
