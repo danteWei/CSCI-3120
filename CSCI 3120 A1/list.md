@@ -22,7 +22,7 @@ store a NULL pointer.
 Usage
 -----
 
-The list is initialized with the List_init function and is destroyed
+The list is initialized with the `List_init` function and is destroyed
 with the `list_destroy` function.  `List_destroy` releases the list
 nodes and memory that the list.c code allocates.  It does _not_
 release the user memory that is pointed to by the pointers supplied
