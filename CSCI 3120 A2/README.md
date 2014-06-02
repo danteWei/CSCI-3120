@@ -4,7 +4,7 @@ The codes implement a Model, Controller \& View structure (MCV) for "Game of Lif
 The program uses Shared Memory Segments to share memory/files between threads. 
 
 There are four C files, "GameOfLife.c", "Controller.c", "Model.c", and "View.c". And one single header file called "dataStructure.h". 
-I put every function declaration and all structs in one header file so that it will be easier to manage.
+I put every function declarations and all structs in one header file so that it will be easier to manage.
 ***
 TBA
 
