@@ -15,7 +15,7 @@ USAGE:
 
 To compile the program, just `cd` to the working directory and type `make` in command line. 
 After the compilation, use `./A2Exec` to involk the program. Once the program is run, unless something bad happens, 
-the program will listen to the keyboard inputs until it receives an "end" input.
+the program will listen to the keyboard inputs and do the operations until it receives an "end" input. Once it receives an "end", it will free all memories that were allocated and clean the shared memory segment.
 
 There are four input types:
 
