@@ -1,10 +1,10 @@
 Assignment 2 Documentation
 ===
-The codes implement a Model, Controller & View structure (MCV) for "Game of Life". 
+The codes implement a Model, Controller \& View structure (MCV) for "Game of Life". 
 The program uses Shared Memory Segments to share memory/files between threads. 
 
-There are three files, "Controller.c", "Model.c", and "View". And one single header file called "dataStructure.h". 
-I put every function declaration and all structs in one header file so that is easier to manage.
+There are four C files, "GameOfLife.c", "Controller.c", "Model.c", and "View.c". And one single header file called "dataStructure.h". 
+I put every function declaration and all structs in one header file so that it will be easier to manage.
 ***
 TBA
 
