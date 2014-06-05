@@ -1,11 +1,9 @@
 Assignment 2 Documentation
 ===
-**Note: Codes are out of date, I'll update them after the due date**
-
 The codes implement a Model, Controller \& View structure (MCV) for "Game of Life". 
 The program uses Shared Memory Segments to share memory/files between threads. 
 
-I created four C files, "GameOfLife.c", "Controller.c", "Model.c", and "View.c". And one single header file called "dataStructure.h". 
+There are four C files, "GameOfLife.c", "Controller.c", "Model.c", and "View.c". And one single header file called "dataStructure.h". 
 I put every function declarations and all structs in one header file so that it will be easier to manage.
 ***
 
@@ -111,7 +109,7 @@ There are four input types:
 
 - `model <filename>` to have a mode switch its operation to use content of \<filename\> as a starting configuration for a new set of iterations on the gird.
 
-- `end` to end the operation of the whole system cleanly.
+- `end` to end to operation of the whole system cleanly.
 
 When you type in your inputs, please be careful about the format, this program is *case-sensitive* and *whitespace-sensitive*.  Also when you input a "legend info", please try to avoid negative numbers and 0 is strictly forbidden.
 
@@ -124,11 +122,11 @@ A sample usage would be:
 		
 		$ ./A2Exec
 		TBA
-		
+
 		//cleans up Executables
 		$ make spotless
 		rm -rf A2Exec
-
+		
 Reviewing Codes:
 --------
 TBA

@@ -58,7 +58,7 @@ There are 13 functions (exclude functions in list.c) in the whole program:
 		- Returnss 1 if successful, 0 otherwise
 	- int freeMem(Package *pkg);
 		- Free allocated memories
-		- Returns 1 if successful. 0 otherwise
+		- Returns 1 if successful, 0 otherwise
 - Model.c
 	- void *modelPoll(void *p);
 		- Function for Model thread
@@ -89,7 +89,7 @@ There are 13 functions (exclude functions in list.c) in the whole program:
 - GameOfLife.c
 	- int game(Grid *g, int ***array);
 		- Does the game of life calculation for one iteration
-		- Stores the resulting grid in a 2-D array pointer
+		- Stores the resulting grid in a 2-D array pointer, which is then returned to Model thread
 		- Returns 1 if successful, 0 otherwise
 
 USAGE:
@@ -103,9 +103,9 @@ the program will listen to the keyboard inputs and do the operations until it re
 
 There are four input types:
 
-- `start view <type> <file>`, where "type" is either "full" or "summary". This command starts a view thread for the specified elements. There will be at most 3 views at most.
+- `start view <type> <file>`, where "type" is either "full" or "summary". This command starts a view thread for the specified elements. There will be at most 3 views.
 
-- `view <X> legend <legend info>`, where _X_ is the view number that are being modified and "legend info" is a string that alternates a character and a number. E.g., "e 10 f 20 g" means that when printing the grid, print "e" if the number is less than 10 and print "f" is the number is between 10 and 20. Of course, in game of life, there will be only 1s and 0s. So the legend info format will always be "_\<some char\>_ 1 _\<some char\>_".
+- `view <X> legend <legend info>`, where _X_ is the view number that are being modified and "legend info" is a string that alternates a character and a number. E.g., "e 10 f 20 g" means that when printing the grid, print "e" if the number is less than 10 and print "f" is the number is between 10 and 20, and print g if the numebr is greater than 20. Of course, in game of life, there will be only 1s and 0s. So the legend info format will always be "_\<some char\>_ 1 _\<some char\>_".
 
 - `model <filename>` to have a mode switch its operation to use content of <filename> as a starting configuration for a new set of iterations on the gird.
 
@@ -117,10 +117,15 @@ A sample usage would be:
 
 		$ cd path/to/working/directory
 		$ make
-		//program will be compiled here
+		gcc -lpthread -g -std=c99 -o A2Exec Controller.c Model.c View.c GameOfLife.c list.c
+		rm -rf *.dSYM
 		
 		$ ./A2Exec
 		TBA
+
+		//cleans up Executables
+		$ make spotless
+		rm -rf A2Exec
 
 Reviewing Codes:
 --------
@@ -128,6 +133,9 @@ TBA
 
 References:
 --------
+TBA
 
+***
 Xinjing Wei
 
+June 5, 2014
