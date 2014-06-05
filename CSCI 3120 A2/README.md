@@ -119,7 +119,8 @@ A sample usage would be:
 
 		$ cd path/to/working/directory
 		$ make
-		//program will be compiled here
+		gcc -lpthread -g -std=c99 -o A2Exec Controller.c Model.c View.c GameOfLife.c list.c
+		rm -rf *.dSYM
 		
 		$ ./A2Exec
 		TBA
