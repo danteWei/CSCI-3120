@@ -1,5 +1,7 @@
 Assignment 2 Documentation
 ===
+**Note: Codes are out of date, I'll update them after the due date**
+
 The codes implement a Model, Controller \& View structure (MCV) for "Game of Life". 
 The program uses Shared Memory Segments to share memory/files between threads. 
 
