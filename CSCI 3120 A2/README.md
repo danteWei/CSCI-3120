@@ -60,7 +60,7 @@ There are 13 functions (exclude functions in list.c) in the whole program:
 		- Returnss 1 if successful, 0 otherwise
 	- int freeMem(Package *pkg);
 		- Free allocated memories
-		- Returns 1 if successful. 0 otherwise
+		- Returns 1 if successful, 0 otherwise
 - Model.c
 	- void *modelPoll(void *p);
 		- Function for Model thread
