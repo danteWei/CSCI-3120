@@ -91,7 +91,7 @@ There are 13 functions (exclude functions in list.c) in the whole program:
 - GameOfLife.c
 	- int game(Grid *g, int ***array);
 		- Does the game of life calculation for one iteration
-		- Stores the resulting grid in a 2-D array pointer
+		- Stores the resulting grid in a 2-D array pointer, which is then returned to Model thread
 		- Returns 1 if successful, 0 otherwise
 
 USAGE:
