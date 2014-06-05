@@ -111,7 +111,7 @@ There are four input types:
 
 - `model <filename>` to have a mode switch its operation to use content of \<filename\> as a starting configuration for a new set of iterations on the gird.
 
-- `end` to end to operation of the whole system cleanly.
+- `end` to end the operation of the whole system cleanly.
 
 When you type in your inputs, please be careful about the format, this program is *case-sensitive* and *whitespace-sensitive*.  Also when you input a "legend info", please try to avoid negative numbers and 0 is strictly forbidden.
 
