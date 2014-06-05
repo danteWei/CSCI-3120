@@ -124,6 +124,10 @@ A sample usage would be:
 		
 		$ ./A2Exec
 		TBA
+		
+		//cleans up Executables
+		$ make spotless
+		rm -rf A2Exec
 
 Reviewing Codes:
 --------
