@@ -10,7 +10,7 @@ Usage
 
 To compile the program, in the working directory where all program files are, type `make` in command line.
 
-To use the program, check the usage in README.txt with additional command listed here:
+To use the program, check the usage in ORIGINAL README.txt with additional command listed here:
 
 - `-t n`: use n threads, n is a positive integer between 1 and 40. If n <= 0, then the program will use 1 thread, if n > 40, the program will use 40 threads. If missing n, the program will return a segmentation fault, so please check your command.
 
