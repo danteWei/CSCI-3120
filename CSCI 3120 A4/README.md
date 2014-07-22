@@ -74,7 +74,7 @@ Suppose thread P1 is placing a word into the grid, it has already placed all the
 
 Therefore, there will be no conflict about when the program should unlock the cells after it placed a word in them. The program can either unlock the cell after putting in one letter, or unlock all cells all at once after putting in the whole word.
 
-The reason why I explained the issue here is that I found it rather frustrating when trying to understand it. People may think, in their first impression, that the way I unlock cells may bring some issues. But the thing is I'VE CHECK IT. So I listed my proof here, to give the reader a good understanding.
+The reason why I explained the issue here is that I found it rather frustrating when trying to understand it. People may think, in their first impression, that the way I unlock cells may bring some issues. But the thing is I'VE CHECKED IT. So I listed my proof here, to give the reader a good understanding.
 
 ### Concurrency Control ###
 
