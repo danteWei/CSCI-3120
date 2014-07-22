@@ -2,12 +2,12 @@ CC=gcc
 CFLAGS=-lpthread
 EXECS=A2Exec
 CLEAN_SRC= *.dSYM
-
+FILE = Controller.c Model.c View.c GameOfLife.c list.c
 
 all: compile clean
 
-compile: Controller.c Model.c View.c GameOfLife.c list.c
-	$(CC) $(CFLAGS) -g -std=c99 -o A2Exec Controller.c Model.c View.c GameOfLife.c list.c
+compile: $(FILE)
+	$(CC) $(CFLAGS) -std=c99 -g -o $(EXECS) $(FILE)
 
 clean: 
 ifneq ($(wildcard $(CLEAN_SRC)),)

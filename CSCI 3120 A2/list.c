@@ -8,12 +8,11 @@
 #include <stdlib.h>
 #include <string.h>
 #include "list.h"
-#define MAXNAME (21)
 
 /* Initialize a list data structure */
 
 int  
-List_init ( List_t *list, char *listName)
+List_init ( List_t *list)
 {
   int all_ok = 0;
 
@@ -23,7 +22,6 @@ List_init ( List_t *list, char *listName)
   if (list != NULL) {
     list->head = NULL;
     list->tail = NULL;
-    strncpy(list->name, listName, MAXNAME);
     all_ok = 1;
   }
 

@@ -1,0 +1,110 @@
+***Compare Case 1 (Original program, 10000 words): ***
+
+$ time head -10000 /usr/share/dict/words | ./make_puzzle -g > /dev/null
+
+real	0m25.188s
+user	0m25.181s
+sys	0m0.002s
+
+
+***Test Case 1 (Single thread, 10000 words): ***
+
+$ time head -10000 /usr/share/dict/words | ./make_puzzle -g -t 1 > /dev/null
+
+real	0m31.579s
+user	0m31.557s
+sys	0m0.015s
+
+
+***Test Case 2 (Two threads, 10000 words): ***
+
+$ time head -10000 /usr/share/dict/words | ./make_puzzle -g -t 2 > /dev/null
+
+real	0m21.716s
+user	0m43.359s
+sys	0m0.014s
+
+
+***Test Case 3 (Eight threads, 10000 words): ***
+
+$ time head -10000 /usr/share/dict/words | ./make_puzzle -g -t 8 > /dev/null
+
+real	0m6.029s
+user	0m47.743s
+sys	0m0.025s
+
+
+***Test Case 4 (Eight threads, 20000 words): ***
+
+$ time head -20000 /usr/share/dict/words | ./make_puzzle -g -t 8 > /dev/null
+
+real	0m16.332s
+user	2m9.587s
+sys	0m0.059s
+
+
+***Test Case 5 (Eight threads, 20000 words, with seed): ***
+
+$ time head -20000 /usr/share/dict/words | ./make_puzzle -g -s 500 -t 8 > /dev/null
+
+real	0m16.265s
+user	2m9.053s
+sys	0m0.052s
+
+
+***Test Case 6 (Two threads, 20 words, with solution grid printed): ***
+
+Note: the "point"s in the grid are not the same "point"s, they all have different prefix.
+
+$ time head -20 /usr/share/dict/words | ./make_puzzle -g -t 2
+Thread 0 terminated.
+Thread 1 terminated.
+Grid dimensions: 15 x 17
+
+...t......t.........
+....n.....n.........
+.....i....i.........
+......o..0o..d......
+.......p.3pmrht.....
+.......d---3ts......
+........-08016-point
+tniop-02d31080......
+....t-5,4,2d11-point
+.........,-n........
+........4.p.d.......
+.......-..o.........
+......d...i.........
+..........n.........
+..........t.........
+
+real	0m0.014s
+user	0m0.020s
+sys	0m0.003s
+
+
+***Compare Case 2 (Original pogram, 20 words, with solution grid printed): ***
+
+Note: the "point"s in the grid are not the same "point"s, they all have different prefix.
+
+$ time head -20 /usr/share/dict/words | ./make_puzzle -g
+Grid dimensions: 15 x 20
+
+...t......t.........
+....n.....n.........
+.....i....i.........
+......o..0o..d......
+.......p.3pmrht.....
+.......d---3ts......
+........-08016-point
+tniop-02d31080......
+....t-5,4,2d11-point
+.........,-n........
+........4.p.d.......
+.......-..o.........
+......d...i.........
+..........n.........
+..........t.........
+
+real	0m0.026s
+user	0m0.007s
+sys	0m0.002s

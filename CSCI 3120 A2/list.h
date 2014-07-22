@@ -12,12 +12,11 @@ typedef struct list_node {
 } List_node_t;
 
 typedef struct {
-  char name[MAXNAME];
   List_node_t *head;
   List_node_t *tail;
 } List_t;
 
-int  List_init ( List_t *list, char *listName );
+int  List_init ( List_t *list);
 void List_destroy( List_t *list );
 int List_size(List_t *list);
 
