@@ -18,7 +18,7 @@ To use the program, check the usage in README.txt with additional command listed
 
 - to test the time: `time head -n /usr/share/dict/words | ./make_puzzle <-g> <-s seed> <-t n>`
 
-to test the time without counting the time for printing: `time head -n /usr/share/dict/words | ./make_puzzle <-g> <-s seed> <-t n> > /dev/null`
+- to test the time without counting the time for printing: `time head -n /usr/share/dict/words | ./make_puzzle <-g> <-s seed> <-t n> > /dev/null`
 
 Thread
 ===
