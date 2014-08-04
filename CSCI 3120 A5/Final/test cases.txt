@@ -1,0 +1,170 @@
+Test 1 (one thread, grow p3 memory to 92 while less than 44 bytes available in the original location):
+
+$ ./A5Exec -t 1 -s 1024
+mem_base: 0x9b26008
+used_head: (nil)
+size: 1012
+p_node: 0x9b26014; p_node->next: 0x9b26058
+p1_node: 0x9b26058; p1_node->prev: 0x9b26014;p1_node->next: 0x9b260ac.
+p2_node: 0x9b260ac; p2_node->prev: 0x9b26058;p2_node->next: (nil).
+The address of p1: 0x9b2606c; size of p1: 64; offset of p1: 0x9b26058.
+p1_node: (nil)
+p_node->next: 0x9b260ac
+p2_node->prev: 0x9b26014
+p3_node: 0x9b26058; p3_node->prev: 0x9b26014;p3_node->next: 0x9b260ac.
+p_node->next: 0x9b26058; p2_node->prev: 0x9b26058
+grow p3 memory.
+The address of p3 before: 0x9b2606c; size of p3 before: 48; offset of p3 before: 0x9b26058.
+The address of p3 now: 0x9b260f4; size of p3 now: 92; offset of p3 now: 0x9b260f4.
+No memory leak detected, program can exit cleanly.
+
+
+
+Test 2 (one thread, grow p3 memory to 52 while greater than 4 bytes available in the original location):
+
+$ make
+gcc -g -m32 -o A5Exec Dynamic_Memory.c -lm -pthread
+rm -rf *.dSYM
+xwei@bluenose:~/SVN/CSCI 3120 A5$ ./A5Exec -t 1 -s 1024
+mem_base: 0x8961008
+used_head: (nil)
+size: 1012
+p_node: 0x8961014; p_node->next: 0x8961058
+p1_node: 0x8961058; p1_node->prev: 0x8961014;p1_node->next: 0x89610ac.
+p2_node: 0x89610ac; p2_node->prev: 0x8961058;p2_node->next: (nil).
+The address of p1: 0x896106c; size of p1: 64; offset of p1: 0x8961058.
+p1_node: (nil)
+p_node->next: 0x89610ac
+p2_node->prev: 0x8961014
+p3_node: 0x8961058; p3_node->prev: 0x8961014;p3_node->next: 0x89610ac.
+p_node->next: 0x8961058; p2_node->prev: 0x8961058
+grow p3 memory.
+The address of p3 before: 0x896106c; size of p3 before: 48; offset of p3 before: 0x8961058.
+The address of p3 now: 0x896106c; size of p3 now: 52; offset of p3 now: 0x896106c.
+No memory leak detected, program can exit cleanly.
+
+
+Test 3 (one thread, grow p3 memory to 11114 which is way too big):
+
+$ ./A5Exec -t 1 -s 1024
+mem_base: 0x8c8d008
+used_head: (nil)
+size: 1012
+p_node: 0x8c8d014; p_node->next: 0x8c8d058
+p1_node: 0x8c8d058; p1_node->prev: 0x8c8d014;p1_node->next: 0x8c8d0ac.
+p2_node: 0x8c8d0ac; p2_node->prev: 0x8c8d058;p2_node->next: (nil).
+The address of p1: 0x8c8d06c; size of p1: 64; offset of p1: 0x8c8d058.
+p1_node: (nil)
+p_node->next: 0x8c8d0ac
+p2_node->prev: 0x8c8d014
+p3_node: 0x8c8d058; p3_node->prev: 0x8c8d014;p3_node->next: 0x8c8d0ac.
+p_node->next: 0x8c8d058; p2_node->prev: 0x8c8d058
+grow p3 memory.
+The address of p3 before: 0x8c8d06c; size of p3 before: 48; offset of p3 before: 0x8c8d058.
+the size that is requested is too large! The program will not allocate any memory to this request.
+Fail to grow memory, not enough space.
+The address of p3 now: 0x8c8d06c; size of p3 now: 48; offset of p3 now: 0x8c8d06c.
+No memory leak detected, program can exit cleanly.
+
+
+Test 4 (one thread, allocate memory of 6114 bytes which is way too big):
+
+$ ./A5Exec -t 1 -s 1024
+mem_base: 0x8645008
+used_head: (nil)
+size: 1012
+the size that is requested is too large! The program will not allocate any memory to this request.
+p_node: 0x8645014; p_node->next: 0x8645058
+p2_node: 0x8645058; p2_node->prev: 0x8645014;p2_node->next: (nil).
+p_node->next: 0x8645058
+p2_node->prev: 0x8645014
+p3_node: 0x864508c; p3_node->prev: 0x8645058;p3_node->next: (nil).
+p_node->next: 0x8645058; p2_node->prev: 0x8645014
+grow p3 memory.
+The address of p3 before: 0x86450a0; size of p3 before: 48; offset of p3 before: 0x864508c.
+The address of p3 now: 0x86450e4; size of p3 now: 92; offset of p3 now: 0x86450e4.
+No memory leak detected, program can exit cleanly.
+
+
+Test 5 (one thread, one memory (p3) is not released before all memory is released):
+
+$ ./A5Exec -t 1 -s 1024
+mem_base: 0x81c9008
+used_head: (nil)
+size: 1012
+p_node: 0x81c9014; p_node->next: 0x81c9058
+p2_node: 0x81c90ac; p2_node->prev: 0x81c9058;p2_node->next: (nil).
+p_node->next: 0x81c90ac
+p2_node->prev: 0x81c9014
+p3_node: 0x81c90e0; p3_node->prev: 0x81c90ac;p3_node->next: (nil).
+p_node->next: 0x81c90ac; p2_node->prev: 0x81c9014
+grow p3 memory.
+The address of p3 before: 0x81c90f4; size of p3 before: 48; offset of p3 before: 0x81c90e0.
+The address of p3 now: 0x81c9138; size of p3 now: 92; offset of p3 now: 0x81c9138.
+The memory (48 bytes) in address [0x81c9028] is not yet freed (memory leak). 
+	The address of the node pointer of this memory is [0x81c9014]. 
+
+
+Test 6 (3 threads, every one of them has a memory that is not released before end_memory is called):
+
+$ ./A5Exec -t 3 -s 1024
+mem_base: 0x9114008
+used_head: (nil)
+size: 1012
+thread: 0; p_node: 0x9114014; p_node->next: 0x9114058
+p1_node: 0x9114058; p1_node->prev: 0x9114014;p1_node->next: 0x91140ac.
+thread: 0; p2_node: 0x91140ac; p2_node->prev: 0x9114058;p2_node->next: (nil).
+thread: 0; p1_node: (nil)
+thread: 0; p_node->next: 0x91140ac
+thread: 0; p2_node->prev: 0x9114014
+thread: 0; p3_node: 0x91140e0; p3_node->prev: 0x91140ac;p3_node->next: (nil).
+thread: 0; p_node->next: 0x91140ac; p2_node->prev: 0x9114014
+thread: 0; grow p3 memory.
+mem_base: 0x9114008
+used_head: 0x9114014
+size: 1012
+thread: 1; p_node: 0x9114124; p_node->next: 0x9114168
+p1_node: 0x9114168; p1_node->prev: 0x9114124;p1_node->next: 0x91141bc.
+thread: 1; p2_node: 0x91141bc; p2_node->prev: 0x9114168;p2_node->next: (nil).
+thread: 1; p1_node: (nil)
+thread: 1; p_node->next: 0x91141bc
+thread: 1; p2_node->prev: 0x9114124
+thread: 1; p3_node: 0x91141f0; p3_node->prev: 0x91141bc;p3_node->next: (nil).
+thread: 1; p_node->next: 0x91141bc; p2_node->prev: 0x9114124
+thread: 1; grow p3 memory.
+thread: 1; The address of p3 before: 0x9114204; size of p3 before: 48; offset of p3 before: 0x91141f0.
+thread: 1; The address of p3 now: 0x9114248; size of p3 now: 92; offset of p3 now: 0x9114248.
+mem_base: 0x9114008
+used_head: 0x9114014
+size: 1012
+thread: 2; p_node: 0x9114168; p_node->next: 0x91141ac
+p1_node: 0x91141ac; p1_node->prev: 0x9114168;p1_node->next: 0x9114200.
+thread: 2; p2_node: 0x9114200; p2_node->prev: 0x91141ac;p2_node->next: (nil).
+thread: 2; p1_node: (nil)
+thread: 2; p_node->next: 0x9114200
+thread: 2; p2_node->prev: 0x9114168
+thread: 2; p3_node: 0x9114234; p3_node->prev: 0x9114200;p3_node->next: (nil).
+thread: 2; p_node->next: 0x9114200; p2_node->prev: 0x9114168
+thread: 2; grow p3 memory.
+thread: 2; The address of p3 before: 0x9114248; size of p3 before: 48; offset of p3 before: 0x9114234.
+thread: 2; The address of p3 now: 0x911428c; size of p3 now: 92; offset of p3 now: 0x911428c.
+thread: 0; The address of p3 before: 0x91140f4; size of p3 before: 48; offset of p3 before: 0x91140e0.
+thread: 0; The address of p3 now: 0x91141c0; size of p3 now: 92; offset of p3 now: 0x91141c0.
+Thread 0 terminated.
+Thread 1 terminated.
+Thread 2 terminated.
+The memory (48 bytes) in address [0x9114028] is not yet freed (memory leak). 
+	The address of the node pointer of this memory is [0x9114014]. 
+
+The memory (48 bytes) in address [0x9114138] is not yet freed (memory leak). 
+	The address of the node pointer of this memory is [0x9114124]. 
+
+The memory (48 bytes) in address [0x911417c] is not yet freed (memory leak). 
+	The address of the node pointer of this memory is [0x9114168]. 
+
+
+
+
+
+
+
