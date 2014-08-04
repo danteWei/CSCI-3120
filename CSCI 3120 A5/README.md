@@ -67,7 +67,7 @@ Basic Functions:
 
 - `void *grow_memory(int size, void *p)`: try to grow the memory partition referenced by memory "p" so that it uses "size" by s with any extra space allocated at the end of the current memory block (e.g. if I call `p = grow_memory(92, *p)`, then the size of p will be 92 bytes after this call if there is enough space). The location of the old memory may change if the space after the current memory block is not enough. The function will return NULL if there is not enough in the entire memory.
 
-- `void release_memory(void *p)`: release memory partition referenced by pointer "p" back to free space. (**This function will not update the pointers outside of this function, the users will have to update those pointers themselves*)
+- `void release_memory(void *p)`: release memory partition referenced by pointer "p" back to free space. (**This function will not update the pointers outside of this function, the users will have to update those pointers themselves**)
 
 - `int start_memory(int size)`: do whatever initialization. It should be only called once at the beginning of the program. It returns 1 if initiation succeeded, 0 otherwise.
 
