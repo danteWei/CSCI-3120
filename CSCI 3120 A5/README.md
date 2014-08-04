@@ -5,7 +5,7 @@ The program implements a thread safe meory management system based on dynamic pa
 
 The aim of the program is to implement `free()`, `malloc()`, and `realloc()`. So if you do the following in your program, it should behave the same way as those three function:
 
-`#deine malloc(A) get_memory(A)`
+`#define malloc(A) get_memory(A)`
 
 `#define realloc(A, B) grow_memory((B), (A))`
 
