@@ -3,6 +3,16 @@ Assignment 5 Documentation
 
 The program implements a thread safe meory management system based on dynamic partitions that uses a "best fit" strategy. 
 
+The aim of the program is to implement `free()`, `malloc()`, and `realloc()`. So if you do the following in your program, it should behave the same way as those three function:
+
+`#deine malloc(A) get_memory(A)`
+
+`#define realloc(A, B) grow_memory((B), (A))`
+
+`#define free(A) release_memory(A)`
+
+When release a memory, the user is responsible for doing `release_memory(p); p = NULL;` just like what you would do with `free()`.
+
 ***
 
 Usage:
