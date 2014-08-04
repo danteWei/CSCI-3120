@@ -8,7 +8,7 @@ The program implements a thread safe meory management system based on dynamic pa
 Usage:
 ------
 
-When first time use this program, you need to compile the program, you can either use `gcc -g -m32 -o <executable name> Dynamic_Memory.c -lm -pthread` to compile the program (`-m32` tells the system to use 4 bytes for pointers and int), or you can simply type `make` in the command line (in this case the executable file name is "A5Exec"), if you want to delelete the executable file, use the command `make spotless`
+When first time use this program, you need to compile the program, you can either use `gcc -g -m32 -o <executable name> Dynamic_Memory.c -lm -pthread` to compile the program (`-m32` tells the system to use 4 bytes for pointers and int), or you can simply type `make` in the command line (in this case the executable file name is "A5Exec"), if you want to delete the executable file, use the command `make spotless`
 
 To run the program, if the executable is called "A5Exec", then the command will be:
 
