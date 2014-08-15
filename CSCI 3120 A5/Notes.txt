@@ -1,3 +1,0 @@
-- if *p is a malloced pointer, then *(p+1) means the next byte
-
-- use the memory already allocated to store pointers? --> Needs at least 24 bytes
