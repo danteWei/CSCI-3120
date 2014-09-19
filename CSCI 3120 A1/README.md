@@ -20,7 +20,7 @@ executable is up to date, then invoke the program using `./A1Exec` command.
 
 I set the alarm interrupt to print "alarm start" every time it interrupts the
 prgroam, so that we know it is interrupter, but now I commented it out, please
-fell free to add it back if you want to. If you need to trigger any other
+feel free to add it back if you want to. If you need to trigger any other
 interrupt except SIGINT, use the following command `kill -s <signal name> pid`
 to invoke it. If you want to find the process ID, use the following command: 
 `ps ax | grep <program name>`. For example, I use `./A1Exec` to invoke my program, 
