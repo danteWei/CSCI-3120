@@ -57,7 +57,7 @@ struct vector* create(int capacity) {
 
   vec->capacity = capacity;
 
-  vec->array = malloc(__________ * capacity);
+  vec->array = malloc(sizeof(int) * capacity);
   if (vec->array == NULL) {
     printf("Out of memory.\n");
     exit(EXIT_FAILURE);
@@ -77,7 +77,7 @@ int* access(struct vector* vec, int i) {
 }
 
 void destroy(struct vector* vec) {
-  free(____________);
+  free(vec->array);
   free(vec);
 }
 
@@ -95,11 +95,11 @@ void push_back(struct vector* vec, int value) {
     }
 
     for (i = 0; i < vec->size; i++)
-      vec->array[i] = ______________;
+      vec->array[i] = temp[i];
 
     vec->capacity *= GROW_FACTOR;
 
-    free(_____);
+    free(temp);
   }
 
   vec->array[vec->size] = value;
@@ -135,4 +135,3 @@ void pop_back(struct vector* vec) {
     free(temp);
   }
 }
-

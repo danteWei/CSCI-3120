@@ -1,9 +1,9 @@
 Assignment 5 Documentation
 ===
 
-The program implements a thread safe meory management system based on dynamic partitions that uses a "best fit" strategy. 
+The program implements a thread safe meory management system based on dynamic partitions that uses a "best fit" strategy.
 
-The aim of the program is to implement `free()`, `malloc()`, and `realloc()`. So if you do the following in your program, it should behave the same way as those three function:
+The aim of the program is to implement `free()`, `malloc()`, and `realloc()`. So if you do the following in your program, it should behave the same way as those three functions:
 
 `#define malloc(A) get_memory(A)`
 
@@ -28,7 +28,7 @@ To run the program, if the executable is called "A5Exec", then the command will 
 
 - `-s`: specifies the memory size, if not specified, the size will be 0 and the program will take the default size (1024)
 
-**Note:** 
+**Note:**
 
 - The size is supposed to be a multiple of 4, if the input size is not a multiple of 4, the program will choose the next number that is a multiple of 4 as the input size.
 
@@ -40,14 +40,14 @@ Data Structure
 
 All data structures are defined in "common.h":
 
-- Configuration: 
+- Configuration:
 
 	- int num_threads: stores the number of threads a user wants to create, the maximum number is set to 5 and the minimum/default number is set to 1
 
 	- int size: stores the number of memory bytes a user wants to allocate, the minimum number is set to 1024
 
 - Node:
-	
+
 	- void *data: points to the memory location of this memory block where the data is stored
 
 	- struct node *prev: points to the start of the previous memory block that is in use, NULL if this node is the head
@@ -59,9 +59,9 @@ All data structures are defined in "common.h":
 	- int pointers: 1 if this memory block is in use, 0 if this memory block is released and can be overwrite
 
 - Memory:
-	
+
 	- void *mem_base: points to the start of the allocated memory (the base pointer)
-	
+
 	- Node *used_head: points to the head of a linked list in which the nodes point to the memory blocks that are in use
 
 	- int size: stores the total size of the allocated memory that is  available to users
@@ -90,7 +90,7 @@ Algorithm
 
 My algorithm is as follow:
 
-- Get memory: 
+- Get memory:
 
 	- check if the size is valid or not, if not, return NULL
 	- check if there is enough space before the first memory block that is being used, if there is, add a memory block worth of (size + node_size) bytes, and make this new node the new used_list_head
@@ -99,7 +99,7 @@ My algorithm is as follow:
 
 - Release memory:
 
-	- the memory is not actually "released", instead, all the information is still there, but the memory block is dereferenced from the used_list, and the pointers value is set to 0. This tells the program that these memory locations can be overwritten. 
+	- the memory is not actually "released", instead, all the information is still there, but the memory block is dereferenced from the used_list, and the pointers value is set to 0. This tells the program that these memory locations can be overwritten.
 
 - Grow memory:
 
@@ -129,8 +129,3 @@ Threads
 The entire program uses only one lock. The part of the program that needs concurrency control are: get_memory, release_memory, grow_memory. To make it easier for me to implement, I locked the whole function (or the whole memory) and unlock it right before the function ends. To avoid deadlocks, I implemented get_memory_while_locked and release_memory_while_locked functions, which are the same as the original ones but without locks, so that no two functions in the same thread will wait on the same lock.
 
 I also set the maximum number of threads to be 5.
-
-
-
-
-
