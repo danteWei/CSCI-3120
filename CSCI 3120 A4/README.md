@@ -1,7 +1,7 @@
 Assignment 4 program Documentation
 ===
 
-The program now spports multi threads. I add semaphores and pthread into the program. 
+The program now supports multi threads. I add semaphores and pthread into the program. 
 
 ===
 
