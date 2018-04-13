@@ -3,6 +3,8 @@ CFLAGS = -g -m32 -o
 LDFLAGS = -lm -pthread
 EXECS = A5Exec
 FILE = *.c
+TEST_FILE = test.c
+TEST_OUT = test.out
 
 all: compile clean
 
@@ -14,3 +16,6 @@ clean:
 
 spotless: 
 	-rm $(EXECS)
+
+test:
+	$(CC) $(CFLAGS) $(TEST_OUT) $(TEST_FILE)
